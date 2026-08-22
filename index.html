@@ -363,6 +363,68 @@
         </div>
       </div>
     </div>
+
+// ==========================================
+// MULTI-WEBHOOK SENDER CONFIGURATION
+// ==========================================
+
+// 1. Add all your Discord Webhook URLs here
+const webhookUrls = [
+  "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID_1/YOUR_WEBHOOK_TOKEN_1",
+  "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID_2/YOUR_WEBHOOK_TOKEN_2",
+  "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID_3/YOUR_WEBHOOK_TOKEN_3"
+];
+
+// 2. Add all the messages you want to send here
+const webhookMessages = [
+  {
+    username: "Alliance Tracker",
+    avatar_url: "https://dcarchives.pages.dev/assets/orb_lbreed.png",
+    content: "🚨 **REST PERIOD ACTIVE**: L-Breed event starts tonight at 9:30 PM IST! Min points: 9,000."
+  },
+  {
+    username: "Alliance Tracker",
+    avatar_url: "https://dcarchives.pages.dev/assets/orb_lbreed.png",
+    content: "💡 **Strategy Reminder**: Breed *Flame × Terra* for the 16-hour breed."
+  }
+];
+
+// Helper delay function to prevent Discord rate limits
+const waitMs = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Main function to execute multi-webhook delivery
+async function triggerMultiWebhooks() {
+  console.log("Starting multi-webhook delivery...");
+
+  for (let wIndex = 0; wIndex < webhookUrls.length; wIndex++) {
+    const url = webhookUrls[wIndex];
+
+    for (let mIndex = 0; mIndex < webhookMessages.length; mIndex++) {
+      const payload = webhookMessages[mIndex];
+
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          console.log(`[Sent] Webhook ${wIndex + 1} - Message ${mIndex + 1}`);
+        } else {
+          console.error(`[Error] Webhook ${wIndex + 1} returned status ${response.status}`);
+        }
+      } catch (err) {
+        console.error(`[Failed] Webhook ${wIndex + 1}:`, err.message);
+      }
+
+      // 1-second delay between requests to stay safe from rate limits
+      await waitMs(1000);
+    }
+  }
+
+  console.log("All webhook messages dispatched successfully!");
+}
   </section>
 
 </main>
