@@ -1,73 +1,224 @@
-<file name="index.html">
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Fool's Abode - Alliance & Event Hub</title>
+<title>The Fool's Abode - Alliance Hub & Chest Tracker</title>
 <style>
   :root {
-    --bg-dark: #0b0715;
-    --card-bg: #151020;
-    --border: #2c213d;
-    --accent: #a970ff;
-    --accent-hover: #8151b9;
-    --text-muted: #bcb4c9;
-    --gold: #ffc107;
+    --bg-main: #060814;
+    --bg-card: #0d1124;
+    --bg-card-inner: #131936;
+    --border-color: #1e294d;
+    --accent-purple: #a970ff;
+    --accent-cyan: #00d2ff;
+    --accent-green: #2ecc71;
+    --accent-gold: #ffb834;
+    --accent-red: #ff4757;
+    --text-muted: #8b9bb4;
+    --text-light: #e2e8f0;
     --discord-color: #5865F2;
   }
   
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-  body { background: var(--bg-dark); color: #fff; padding-bottom: 50px; }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  body { background: var(--bg-main); color: #fff; padding-bottom: 60px; min-height: 100vh; }
 
-  header { padding: 18px 7%; display: flex; justify-content: space-between; align-items: center; background: #120c20; border-bottom: 1px solid #33234d; position: sticky; top: 0; z-index: 100; }
-  .logo-header-group { display: flex; align-items: center; gap: 12px; }
-  .alliance-logo-img { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--accent); object-fit: cover; background: #030b1e; }
+  /* HEADER */
+  header {
+    padding: 16px 6%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #090c1e;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo-header-group { display: flex; align-items: center; gap: 14px; }
+  .alliance-logo-img { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--accent-purple); object-fit: cover; background: #030b1e; }
   .logo-container { display: flex; flex-direction: column; }
-  .logo { font-size: 22px; font-weight: 800; } .logo span { color: var(--accent); }
+  .logo { font-size: 20px; font-weight: 800; tracking: 0.5px; }
+  .logo span { color: var(--accent-purple); }
   .author-credit { font-size: 11px; color: var(--text-muted); font-style: italic; margin-top: -2px; }
   
-  nav button { background: none; border: none; color: #ddd; font-size: 14px; cursor: pointer; padding: 8px 14px; border-radius: 8px; transition: 0.2s; }
-  nav button.active, nav button:hover { background: #25143a; color: var(--accent); font-weight: bold; }
+  nav { display: flex; gap: 8px; }
+  nav button {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+  nav button.active, nav button:hover {
+    background: #182042;
+    color: var(--accent-purple);
+    border-color: #2a386c;
+  }
 
-  .container { padding: 30px 5%; max-width: 1400px; margin: auto; }
+  /* CONTAINER & TABS */
+  .container { padding: 25px 6%; max-width: 1300px; margin: auto; }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
 
-  .info-banner { background: #1a122c; border: 1px solid var(--accent); border-radius: 12px; padding: 15px 20px; margin-bottom: 25px; display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; align-items: center; }
-  .info-stat { font-size: 14px; } .info-stat b { color: var(--gold); font-size: 16px; }
+  /* RESTING / ACTIVE CARD BANNER */
+  .banner-card {
+    background: linear-gradient(135deg, #0d122b 0%, #080a18 100%);
+    border: 1px solid #1e2b58;
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 35px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .banner-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -10%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(169, 112, 255, 0.12) 0%, rgba(0,0,0,0) 70%);
+    pointer-events: none;
+  }
 
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; margin-top: 20px; }
-  .tool-box { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 16px; position: relative; }
+  .banner-left {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    flex: 1;
+    min-width: 300px;
+  }
+
+  .banner-icon-box {
+    width: 130px;
+    height: 130px;
+    background: radial-gradient(circle, #182247 0%, #0a0e21 100%);
+    border: 2px solid #2a3c75;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.6), 0 0 20px rgba(0,0,0,0.4);
+    flex-shrink: 0;
+  }
+  .banner-icon-box img { width: 95px; height: 95px; object-fit: contain; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5)); }
+
+  .banner-details { display: flex; flex-direction: column; gap: 8px; }
+  .status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    width: fit-content;
+  }
+  .status-resting { background: rgba(169, 112, 255, 0.2); color: #c89bff; border: 1px solid rgba(169, 112, 255, 0.4); }
+  .status-active { background: rgba(46, 204, 113, 0.2); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.4); }
+  .status-skip { background: rgba(255, 71, 87, 0.2); color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.4); }
+
+  .banner-title { font-size: 32px; font-weight: 900; letter-spacing: 1px; color: #fff; text-transform: uppercase; }
   
-  .countdown-box { background: linear-gradient(135deg, #1c1233 0%, #0d0914 100%); border: 1px solid var(--accent); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 25px; }
-  .countdown-timer { font-size: 28px; font-weight: 800; color: var(--gold); margin: 8px 0; font-family: monospace; }
+  .stats-row { display: flex; gap: 15px; margin-top: 4px; flex-wrap: wrap; }
+  .stat-box { background: var(--bg-card-inner); border: 1px solid #1a2448; padding: 8px 14px; border-radius: 10px; min-width: 90px; }
+  .stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+  .stat-val { font-size: 14px; font-weight: 800; color: #fff; margin-top: 2px; }
 
-  .form-group { margin-bottom: 15px; }
-  label { display: block; margin-bottom: 6px; color: var(--text-muted); font-size: 14px; }
-  input, select, textarea { width: 100%; padding: 10px 12px; border-radius: 8px; background: #0d0914; color: #fff; border: 1px solid var(--border); outline: none; font-size: 14px; }
-  input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+  /* TIMER SECTION */
+  .timer-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    border-left: 1px solid #1a254a;
+    padding-left: 30px;
+    min-width: 280px;
+  }
+  @media (max-width: 850px) {
+    .timer-section { border-left: none; padding-left: 0; border-top: 1px solid #1a254a; padding-top: 20px; width: 100%; }
+  }
 
-  .table-wrapper { overflow-x: auto; background: #0d0914; border-radius: 12px; border: 1px solid var(--border); margin-top: 15px; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
-  th, td { padding: 12px 16px; border-bottom: 1px solid var(--border); white-space: nowrap; }
-  th { background: #170f2b; color: var(--accent); font-weight: bold; }
+  .timer-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; }
+  .timer-boxes { display: flex; gap: 10px; margin-top: 10px; }
+  .time-card {
+    background: #111730;
+    border: 1px solid #22305c;
+    border-radius: 10px;
+    padding: 8px 12px;
+    text-align: center;
+    min-width: 58px;
+  }
+  .time-num { font-size: 22px; font-weight: 900; color: var(--accent-gold); font-family: monospace; }
+  .time-sub { font-size: 9px; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; font-weight: 700; }
+
+  /* STRATEGY NOTES PANEL */
+  .strategy-panel {
+    background: #0b0f22;
+    border: 1px solid #1a2448;
+    border-radius: 14px;
+    padding: 16px;
+    width: 100%;
+    margin-top: 10px;
+  }
+  .strategy-title { font-size: 11px; font-weight: 800; color: var(--accent-purple); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  .strategy-item { display: flex; gap: 10px; font-size: 12px; color: var(--text-light); margin-bottom: 8px; line-height: 1.4; }
+  .strategy-item:last-child { margin-bottom: 0; }
+  .strategy-icon { font-size: 14px; flex-shrink: 0; }
+
+  /* CHEST TRACKER LIST */
+  .section-header { font-size: 14px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
   
-  .badge { font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; display: inline-block; }
-  .badge-live { background: #4caf50; color: #fff; }
-  .badge-timed { background: #ff9800; color: #fff; }
-  .badge-skip { background: #f44336; color: #fff; }
-  .result-card { background: #0d0914; border-left: 4px solid var(--accent); padding: 12px; margin-top: 15px; border-radius: 4px; }
+  .chest-list { display: flex; flex-direction: column; gap: 10px; }
+  .chest-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .chest-item:hover { border-color: #2b3b6e; transform: translateY(-2px); }
+  .chest-item.active-item { border-color: var(--accent-green); background: linear-gradient(90deg, #0d1627 0%, #0d1124 100%); }
+  .chest-item.skip-item { border-color: #381a24; opacity: 0.85; }
 
-  .btn-discord { width: 100%; padding: 12px; background: var(--discord-color); border: none; border-radius: 8px; color: #fff; font-weight: bold; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+  .chest-item-left { display: flex; align-items: center; gap: 16px; }
+  .chest-icon { width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5)); }
+  .chest-info { display: flex; flex-direction: column; gap: 3px; }
+  .chest-name { font-size: 15px; font-weight: 800; color: #fff; letter-spacing: 0.5px; }
+  .chest-sub { font-size: 12px; color: var(--text-muted); }
+
+  .chest-item-right { display: flex; align-items: center; gap: 20px; text-align: right; }
+  .pts-box { display: flex; flex-direction: column; align-items: flex-end; }
+  .pts-val { font-size: 14px; font-weight: 800; color: var(--accent-gold); }
+  .pts-val.skip-val { color: var(--accent-red); font-weight: 700; }
+  .pts-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+
+  /* DISCORD PINGER TAB */
+  .grid-pinger { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 800px) { .grid-pinger { grid-template-columns: 1fr; } }
+
+  .tool-box { background: var(--bg-card); border: 1px solid var(--border-color); padding: 22px; border-radius: 16px; }
+  .form-group { margin-bottom: 16px; }
+  label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 13px; font-weight: 600; }
+  input, select, textarea { width: 100%; padding: 11px 14px; border-radius: 8px; background: #070a17; color: #fff; border: 1px solid var(--border-color); outline: none; font-size: 13px; }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent-purple); }
+
+  .btn-discord { width: 100%; padding: 12px; background: var(--discord-color); border: none; border-radius: 8px; color: #fff; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 14px; margin-top: 10px; }
   .btn-discord:hover { background: #4752c4; }
-  .btn-auto { background: #2e7d32; }
-  .btn-auto:hover { background: #1b5e20; }
-  .btn-reset { background: #44335c; color: #fff; padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; margin-top: 5px; }
-
-  .guide-card { background: #120b22; border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 15px; }
-  .guide-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 12px; }
-  .task-tag { background: #25143a; color: var(--accent); font-size: 11px; padding: 2px 8px; border-radius: 4px; border: 1px solid var(--accent); }
+  .btn-reset { background: #1f1b3a; color: var(--accent-purple); border: 1px solid #3d2f66; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700; margin-top: 6px; }
 </style>
 </head>
 <body>
@@ -94,65 +245,86 @@
     </div>
   </div>
   <nav>
-    <button class="nav-btn active" onclick="switchTab(event, 'chests')">🏆 Alliance Chests</button>
+    <button class="nav-btn active" onclick="switchTab(event, 'chests')">🏆 Alliance Chest Tracker</button>
     <button class="nav-btn" onclick="switchTab(event, 'pinger')">🔔 Custom Discord Pinger</button>
-    <button class="nav-btn" onclick="switchTab(event, 'events')">🎉 Live Events & Race Guide</button>
   </nav>
 </header>
 
 <main class="container">
 
-  <!-- TAB 1: ALLIANCE CHESTS -->
+  <!-- TAB 1: ALLIANCE CHEST TRACKER -->
   <section id="chests" class="tab-content active">
-    <h2>🏆 Alliance Chest Schedule</h2>
+    
+    <!-- TOP DYNAMIC RESTING / ACTIVE CARD BANNER -->
+    <div class="banner-card">
+      <div class="banner-left">
+        <div class="banner-icon-box">
+          <img id="bannerIcon" src="" alt="Chest Icon">
+        </div>
+        <div class="banner-details">
+          <span id="bannerStatusBadge" class="status-badge status-resting">REST PERIOD</span>
+          <div id="bannerTitle" class="banner-title">RESTING</div>
+          
+          <div class="stats-row">
+            <div class="stat-box">
+              <div class="stat-label">Duration</div>
+              <div id="bannerDuration" class="stat-val">2 Days</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Min. Points</div>
+              <div id="bannerMinPts" class="stat-val" style="color: var(--accent-gold);">SKIP</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Next Up / Active</div>
+              <div id="bannerNextUp" class="stat-val">L - BREED</div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <div class="countdown-box" style="margin-top: 15px;">
-      <h4 style="color: var(--text-muted); font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">⏳ Next Chest Event Countdown</h4>
-      <div id="nextEventName" style="font-weight: bold; font-size: 18px; margin-top: 4px; color: #fff;">Calculating...</div>
-      <div class="countdown-timer" id="countdownTimer">00d 00h 00m 00s</div>
-      <div id="nextEventLocalTime" style="font-size: 13px; color: var(--accent);">Starts in your local time: Loading...</div>
-    </div>
+      <div class="timer-section">
+        <div class="timer-label">
+          <span>⏳</span> <span id="timerHeadline">NEXT CHEST BEGINS IN</span>
+        </div>
+        <div class="timer-boxes">
+          <div class="time-card"><div class="time-num" id="tDays">00</div><div class="time-sub">DAYS</div></div>
+          <div class="time-card"><div class="time-num" id="tHours">00</div><div class="time-sub">HOURS</div></div>
+          <div class="time-card"><div class="time-num" id="tMins">00</div><div class="time-sub">MINS</div></div>
+          <div class="time-card"><div class="time-num" id="tSecs">00</div><div class="time-sub">SECS</div></div>
+        </div>
+        <div id="localStartFootnote" style="font-size: 11px; color: var(--accent-cyan); margin-top: 10px; font-weight: 600;">Starts in your local time: Loading...</div>
+      </div>
 
-    <div class="grid">
-      <div class="tool-box">
-        <span class="badge badge-live" style="float: right;">Active</span>
-        <h3>🥚 Hatching Chest</h3>
-        <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">Duration: 3 Days</p>
-        <p id="activeLocalTime" style="font-size: 12px; color: var(--gold); margin-top: 2px;"></p>
-        <div class="result-card" style="margin-top: 15px;">
-          <p>Minimum Required: <b style="color:var(--gold);">13k points</b></p>
-          <p style="margin-top:4px;">Reward: <b style="color:var(--accent);">Food</b></p>
+      <!-- STRATEGY NOTES -->
+      <div class="strategy-panel">
+        <div class="strategy-title">💡 Strategy Notes & Guide</div>
+        <div id="strategyContent">
+          <!-- Dynamic strategy item based on event -->
         </div>
       </div>
     </div>
 
-    <h3 style="margin-top: 30px;">📅 Full Chest Schedule (Your Local Start Times)</h3>
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>Event Type</th>
-            <th>Duration</th>
-            <th>Start Time (Local)</th>
-            <th>Minimum Target</th>
-            <th>Reward</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="scheduleTableBody"></tbody>
-      </table>
+    <!-- MONTH'S CHESTS SCHEDULE LIST -->
+    <div class="section-header">
+      <span>THIS MONTH'S CHESTS</span>
+      <span style="font-size: 11px; font-weight: 600; color: var(--accent-purple);">Local Standard Time</span>
     </div>
+
+    <div class="chest-list" id="chestListContainer">
+      <!-- Dynamic Chest Schedule Rows -->
+    </div>
+
   </section>
 
   <!-- TAB 2: DISCORD PINGER -->
   <section id="pinger" class="tab-content">
-    <h2>🔔 Custom Discord Text Pinger</h2>
+    <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 20px; color: #fff;">🔔 Custom Discord Text Pinger</h2>
     
-    <div class="grid" style="grid-template-columns: 1fr 1fr;">
+    <div class="grid-pinger">
       <div class="tool-box">
-        <h3>Ping Configuration</h3>
+        <h3 style="font-size: 16px; margin-bottom: 15px; color: var(--accent-purple);">Ping Configuration</h3>
         
-        <div class="form-group" style="margin-top: 15px;">
+        <div class="form-group">
           <label>1. Select Chest Event Preset:</label>
           <select id="pingChestSelect" onchange="loadPresetMessage()">
             <option value="Hatch Chest 🥚|3 Days|13k|Food">Hatch Chest 🥚 (3 Days) — 13k Min (Food)</option>
@@ -183,117 +355,132 @@
       </div>
 
       <div class="tool-box">
-        <h3>Live Preview & 24/7 Setup</h3>
+        <h3 style="font-size: 16px; margin-bottom: 15px; color: var(--accent-cyan);">Live Output Preview</h3>
         
-        <div class="form-group" style="margin-top: 15px;">
+        <div class="form-group">
           <label>Live Output Preview:</label>
-          <div id="msgPreview" style="background: #0d0914; border: 1px solid var(--border); padding: 12px; border-radius: 8px; font-family: monospace; font-size: 13px; white-space: pre-wrap; color: #a970ff; min-height: 120px;"></div>
-        </div>
-
-        <div class="result-card">
-          <h4>💡 How to run 24/7 Pings (Without keeping tab open):</h4>
-          <p style="font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.5;">
-            Web browsers block web pages from sending auto-messages when your computer or browser tab is closed.
-            <br><br>
-            To auto-ping 24/7 automatically:
-            <br>1. Copy your Webhook URL above.
-            <br>2. Set up a free <b>Discord Bot Webhook Bot</b> or a free scheduled job on <b>cron-job.org</b> or <b>Github Actions</b>.
-          </p>
+          <div id="msgPreview" style="background: #060914; border: 1px solid var(--border-color); padding: 14px; border-radius: 10px; font-family: monospace; font-size: 13px; white-space: pre-wrap; color: #a970ff; min-height: 150px; line-height: 1.5;"></div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- TAB 3: EVENTS & MYTHIC RACE GUIDE -->
-  <section id="events" class="tab-content">
-    <h2>🎉 Live Events & Mythic Race Guide</h2>
-    
-    <div class="info-banner" style="margin-top: 15px;">
-      <div class="info-stat">Current Special Event: <b>Mythic Marathon / Race</b></div>
-      <div class="info-stat">Event Duration: <b>11 Days (264 Hours)</b></div>
-      <div class="info-stat">Status: <b style="color:var(--gold);">Live Now</b></div>
-    </div>
-
-    <!-- MAZE ISLAND SUMMARY -->
-    <div class="tool-box" style="margin-bottom: 25px;">
-      <h3>🗺️ Maze Island Event Summary</h3>
-      <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">Duration: <b>11 Days</b> | Total Free Coins: <b>22,700 Coins</b></p>
-      
-      <div class="table-wrapper" style="margin-top: 10px;">
-        <table>
-          <thead>
-            <tr>
-              <th>Dragon Name</th>
-              <th>Rarity</th>
-              <th>Total Cost</th>
-              <th>F2P Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td><b>Luminescent Dragon</b></td><td>Rare</td><td>750 Coins</td><td><span class="badge badge-live">F2P Easy</span></td></tr>
-            <tr><td><b>Loki Dragon</b></td><td>Very Rare</td><td>2,965 Coins</td><td><span class="badge badge-live">F2P Easy</span></td></tr>
-            <tr><td><b>Sad Dragon</b></td><td>Very Rare</td><td>4,205 Coins</td><td><span class="badge badge-live">F2P Easy</span></td></tr>
-            <tr><td><b>Mountain Ogre Dragon</b></td><td>Epic</td><td>7,750 Coins</td><td><span class="badge badge-live">F2P Achievable</span></td></tr>
-            <tr><td><b>Bandaged Dragon</b></td><td>Legendary</td><td>24,970 Coins</td><td><span class="badge badge-skip">Requires Boosters</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- MYTHIC / HEROIC RACE GUIDE (DITLEP STYLE) -->
-    <div class="tool-box">
-      <h3>🏁 Mythic Race Complete Guide (Ditlep Style Breakdown)</h3>
-      <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px; margin-bottom: 15px;">
-        Follow pools and cooldown timers to finish laps faster without wasting gems.
-      </p>
-
-      <div class="guide-card">
-        <div class="guide-header">
-          <b style="color: var(--gold); font-size: 16px;">Lap 1 - Warm Up</b>
-          <span class="task-tag">No Pool Cooldowns</span>
-        </div>
-        <p style="font-size: 13px; color: var(--text-muted);">
-          • Node 1: Collect Gold (x4) | Feed Dragons (x3)<br>
-          • Node 2: Hatch Dragons (x3) | Breed Dragons (x2)<br>
-          • Node 3: Win League Battles (x2) | Collect Food (x4)
-        </p>
-      </div>
-
-      <div class="guide-card">
-        <div class="guide-header">
-          <b style="color: var(--gold); font-size: 16px;">Lap 2 to 4 - Early Sprint</b>
-          <span class="task-tag">Cooldown: 20m - 45m</span>
-        </div>
-        <p style="font-size: 13px; color: var(--text-muted);">
-          • <b>Strategy:</b> Breed Terra + Terra for quick item drops.<br>
-          • <b>Food Task:</b> Buy lowest tier 30-second food (30 Gold each) repeatedly.
-        </p>
-      </div>
-
-      <div class="guide-card">
-        <div class="guide-header">
-          <b style="color: var(--gold); font-size: 16px;">Lap 5 (Guaranteed Rewards) & Lap 15 (Main Prize)</b>
-          <span class="task-tag">Pool Cooldowns: 2h - 8h</span>
-        </div>
-        <p style="font-size: 13px; color: var(--text-muted);">
-          • <b>Battle Nodes:</b> Wait for item wait timers (30m - 1h per battle) instead of spending gems.<br>
-          • <b>Pool Tip:</b> When a pool runs empty (e.g. 8/10 items collected), set an alarm for the pool recovery time before collecting the rest!
-        </p>
-      </div>
-
     </div>
   </section>
 
 </main>
 
 <script>
+// Base64 SVGs embedded directly for icons
+const ICONS = {
+  L_BREED: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0ibE9yYiIgY3g9IjM1JSIgY3k9IjM1JSIgcj0iNjUlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2Y1ZDVmZiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjMwJSIgc3RvcC1jb2xvcj0iI2RmNjJmNiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjcwJSIgc3RvcC1jb2xvcj0iIzhiMWZhMyIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMzZDA2NGQiLz4KICAgIDwvcmFkaWFsR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdvbGRSaW0iIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjZmZlNjk5Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjZDQ5MjI4Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzdhNGEwNiIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iMzgiIGZpbGw9InVybCgjbE9yYikiLz4KICA8ZWxsaXBzZSBjeD0iNDAiIGN5PSIzNSIgcng9IjE0IiByeT0iOCIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC40IiB0cmFuc2Zvcm09InJvdGF0ZSgtMjAgNDAgMzUpIi8+CiAgPCEtLSBUb3AgZGVjb3JhdGl2ZSBnb2xkZW4gc3dpcmwgLS0+CiAgPHBhdGggZD0iTSAyMCAzOCBDIDI1IDE4LCA3NSAxOCwgODAgMzggQyA3MiAyNCwgMjggMjQsIDIwIDM4IFoiIGZpbGw9InVybCgjZ29sZFJpbSkiLz4KICA8IS0tIEJvdHRvbSBkZWNvcmF0aXZlIGdvbGRlbiBzd2lybCAtLT4KICA8cGF0aCBkPSJNIDIwIDYyIEMgMjUgODIsIDc1IDgyLCA4MCA2MiBDIDcyIDc2LCAyOCA3NiwgMjAgNjIgWiIgZmlsbD0idXJsKCNnb2xkUmltKSIvPgo8L3N2Zz4=",
+  E_BREED: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZU9yYiIgY3g9IjM1JSIgY3k9IjM1JSIgcj0iNjUlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZmFlNiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjMwJSIgc3RvcC1jb2xvcj0iI2ZmYjgzNCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjcwJSIgc3RvcC1jb2xvcj0iI2U2NjAwMCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM2NjIyMDAiLz4KICAgIDwvcmFkaWFsR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdvbGRSaW1FIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZTY5OSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iI2Q0OTIyOCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM3YTRhMDYiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjM4IiBmaWxsPSJ1cmwoI2VPcmIpIi8+CiAgPGVsbGlwc2UgY3g9IjQwIiBjeT0iMzUiIHJ4PSIxNCIgcnk9IjgiIGZpbGw9IiNmZmZmZmYiIG9wYWNpdHk9IjAuNCIgdHJhbnNmb3JtPSJyb3RhdGUoLTIwIDQwIDM1KSIvPgogIDxwYXRoIGQ9Ik0gMjAgMzggQyAyNSAxOCwgNzUgMTgsIDgwIDM4IEMgNzIgMjQsIDI4IDI0LCAyMCAzOCBaIiBmaWxsPSJ1cmwoI2dvbGRSaW1FKSIvPgogIDxwYXRoIGQ9Ik0gMjAgNjIgQyAyNSA4MiwgNzUgODIsIDgwIDYyIEMgNzIgNzYsIDI4IDc2LCAyMCA2MiBaIiBmaWxsPSJ1cmwoI2dvbGRSaW1FKSIvPgo8L3N2Zz4=",
+  HATCH: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZWdnR3JhZCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNhOGY1NmEiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiMzNGFhMjEiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMTE1MjA4Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJzaGVsbEdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZjVkYiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNkMWIyODAiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDwhLS0gRWdnIEJhc2UgLS0+CiAgPHBhdGggZD0iTSA1MCAxMiBDIDI4IDEyLCAyMiA0NSwgMjIgNzAgQyAyMiA4OCwgMzUgOTAsIDUwIDkwIEMgNjUgOTAsIDc4IDg4LCA3OCA3MCBDIDc4IDQ1LCA3MiAxMiwgNTAgMTIgWiIgZmlsbD0idXJsKCNlZ2dHcmFkKSIvPgogIDwhLS0gU3RhciBvbiBFZ2cgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSI1MCwzMiA1NCw0MiA2NSw0NCA1Nyw1MSA2MCw2MiA1MCw1NiA0MCw2MiA0Myw1MSAzNSw0NCA0Niw0MiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC45NSIvPgogIDwhLS0gQm90dG9tIFNoZWxsIEhhdGNoIC0tPgogIDxwYXRoIGQ9Ik0gMjAgNjggTCAzMCA3NSBMIDQwIDY4IEwgNTAgNzYgTCA2MCA2OCBMIDcwIDc1IEwgODAgNjggTCA4MCA3OCBDIDgwIDg4LCA2OCA5MiwgNTAgOTIgQyAzMiA5MiwgMjAgODgsIDIwIDc4IFoiIGZpbGw9InVybCgjc2hlbGxHcmFkKSIgc3Ryb2tlPSIjYTE3YTQyIiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+",
+  ARENA: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ic2hpZWxkR3JhZCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjOWM2NjMzIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRhMmMwZiIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ29sZEJvcmRlciIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZmU4OWMiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjYjg4MDE0Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJibGFkZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZmZmZmYiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiNjMmQxZTAiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjNzA4Mjk2Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8IS0tIFNoaWVsZCBCYWNrZ3JvdW5kIC0tPgogIDxwYXRoIGQ9Ik0gNTAgMjAgTCA3OCAyOCBDIDc4IDYwLCA2NSA4MCwgNTAgODggQyAzNSA4MCwgMjIgNjAsIDIyIDI4IFoiIGZpbGw9InVybCgjc2hpZWxkR3JhZCkiIHN0cm9rZT0idXJsKCNnb2xkQm9yZGVyKSIgc3Ryb2tlLXdpZHRoPSI0Ii8+CiAgPCEtLSBTd29yZCAxIC0tPgogIDxwYXRoIGQ9Ik0gMjUgMjUgTCA3NSA3NSBNIDc1IDc1IEwgNjggNzUgTSA3NSA3NSBMIDc1IDY4IiBzdHJva2U9InVybCgjYmxhZGUpIiBzdHJva2Utd2lkdGg9IjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDwhLS0gU3dvcmQgMiAtLT4KICA8cGF0aCBkPSJNIDc1IDI1IEwgMjUgNzUgTSAyNSA3NSBMIDMyIDc1IE0gMjUgNzUgTCAyNSA2OCIgc3Ryb2tlPSJ1cmwoI2JsYWRlKSIgc3Ryb2tlLXdpZHRoPSI2IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI2IiBmaWxsPSJ1cmwoI2dvbGRCb3JkZXIpIi8+Cjwvc3ZnPg==",
+  LEAGUE: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iYmFkZ2VCZyIgY3g9IjUwJSIgY3k9IjUwJSIgcj0iNTAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2U2Mzk0NiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjcwJSIgc3RvcC1jb2xvcj0iIzlkMDIwOCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMzNzAwMDAiLz4KICAgIDwvcmFkaWFsR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdvbGRSaW5nIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZTA2NiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNiNzc5MWYiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjQyIiBmaWxsPSJ1cmwoI2JhZGdlQmcpIiBzdHJva2U9InVybCgjZ29sZFJpbmcpIiBzdHJva2Utd2lkdGg9IjUiLz4KICA8IS0tIERyYWdvbiBoZWFkIHNpbGhvdWV0dGUgLS0+CiAgPHBhdGggZD0iTSAzMiA2NSBDIDI4IDQ1LCA0NSAzMCwgNjggMzIgQyA1NSA0MCwgNTIgNTAsIDY4IDU1IEMgNTUgNjAsIDQyIDcwLCAzMiA2NSBaIiBmaWxsPSIjZmZlMDY2Ii8+CiAgPGNpcmNsZSBjeD0iNTUiIGN5PSI0MCIgcj0iMyIgZmlsbD0iIzM3MDAwMCIvPgo8L3N2Zz4=",
+  FOOD: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iYXBwbGUxIiBjeD0iMzUlIiBjeT0iMzUlIiByPSI2NSUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjZmY3MzczIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iNDAlIiBzdG9wLWNvbG9yPSIjZTYxMDEwIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzZiMDIwMiIvPgogICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ibGVhZkdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNzJlNjM3Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzFjNmIwMCIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPCEtLSBCaWcgQXBwbGUgLS0+CiAgPGNpcmNsZSBjeD0iNjAiIGN5PSI1OCIgcj0iMjgiIGZpbGw9InVybCgjYXBwbGUxKSIvPgogIDwhLS0gU21hbGwgQXBwbGUgLS0+CiAgPGNpcmNsZSBjeD0iMzYiIGN5PSI2NSIgcj0iMjAiIGZpbGw9InVybCgjYXBwbGUxKSIvPgogIDwhLS0gTGVhdmVzIC0tPgogIDxwYXRoIGQ9Ik0gNTggMzIgQyA0NSAyMCwgNjUgMTAsIDc1IDIyIEMgNjUgMjgsIDYyIDMwLCA1OCAzMiBaIiBmaWxsPSJ1cmwoI2xlYWZHcmFkKSIvPgogIDxwYXRoIGQ9Ik0gMzggNDggQyAyOCAzOCwgNDUgMzAsIDUyIDQwIEMgNDQgNDUsIDQxIDQ2LCAzOCA0OCBaIiBmaWxsPSJ1cmwoI2xlYWZHcmFkKSIvPgo8L3N2Zz4=",
+  GEMS: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ2VtVG9wIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2Y3Y2JmZiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNjZjRiZjMiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdlbUJvdCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjYTAxOGM3Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRkMDM2MyIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPCEtLSBQb2x5Z29uIEdlbSAtLT4KICA8cG9seWdvbiBwb2ludHM9IjUwLDE1IDc4LDM1IDUwLDg1IDIyLDM1IiBmaWxsPSJ1cmwoI2dlbUJvdCkiLz4KICA8cG9seWdvbiBwb2ludHM9IjUwLDE1IDc4LDM1IDYyLDM1IDUwLDE1IiBmaWxsPSJ1cmwoI2dlbVRvcCkiIG9wYWNpdHk9IjAuOSIvPgogIDxwb2x5Z29uIHBvaW50cz0iNTAsMTUgMjIsMzUgMzgsMzUgNTAsMTUiIGZpbGw9IiNmZmZmZmYiIG9wYWNpdHk9IjAuNiIvPgogIDxwb2x5Z29uIHBvaW50cz0iMzgsMzUgNjIsMzUgNTAsODUiIGZpbGw9InVybCgjZ2VtVG9wKSIvPgo8L3N2Zz4="
+};
+
 const chestEvents = [
-  { name: "Hatch Chest 🥚", duration: "3 Days", min: "13k minimum", reward: "Food", dateIso: "2026-08-18T16:00:00Z", badge: "badge-live", status: "Active" },
-  { name: "L Breed 🥚", duration: "2 Days", min: "SKIP", reward: "—", dateIso: "2026-08-22T16:00:00Z", badge: "badge-skip", status: "SKIP" },
-  { name: "League Chest 🏆", duration: "2 Days", min: "8k minimum", reward: "Food", dateIso: "2026-08-25T16:00:00Z", badge: "badge-timed", status: "Upcoming" },
-  { name: "Arena Chest ⚔️", duration: "3 Days", min: "10k minimum", reward: "Gems", dateIso: "2026-08-28T16:00:00Z", badge: "badge-timed", status: "Upcoming" },
-  { name: "E Breed 🥚", duration: "3 Days", min: "SKIP", reward: "—", dateIso: "2026-09-01T16:00:00Z", badge: "badge-skip", status: "SKIP" },
-  { name: "Hatch Chest 🥚", duration: "2 Days", min: "8.75k minimum", reward: "Food", dateIso: "2026-09-05T16:00:00Z", badge: "badge-timed", status: "Upcoming" }
+  { 
+    id: "hatch-1", 
+    name: "HATCH", 
+    type: "Hatch", 
+    duration: "3 Days", 
+    minPts: "13,000", 
+    reward: "Food", 
+    rewardIcon: ICONS.FOOD,
+    chestIcon: ICONS.HATCH, 
+    startIso: "2026-08-18T16:00:00Z", 
+    endIso: "2026-08-21T16:00:00Z", 
+    isSkip: false,
+    strategy: [
+      { icon: "🎯", text: "Hatch Flame + Terra or Terra + Terra for quick points." },
+      { icon: "💡", text: "Keep hatchery slots open for maximum efficiency." }
+    ]
+  },
+  { 
+    id: "l-breed-1", 
+    name: "L - BREED", 
+    type: "Breed", 
+    duration: "2 Days", 
+    minPts: "SKIP", 
+    reward: "—", 
+    rewardIcon: null,
+    chestIcon: ICONS.L_BREED, 
+    startIso: "2026-08-21T16:00:00Z", 
+    endIso: "2026-08-23T16:00:00Z", 
+    isSkip: true,
+    strategy: [
+      { icon: "💖", text: "Breed Flame x Terra for the 18-hour breed = 1,388 pts. Eggs hatch in 2 mins!" },
+      { icon: "💡", text: "PREP (15-20h HRS): Stock Pure x Terra or Flame x Terra beforehand for a good start." },
+      { icon: "💎", text: "PRO TIP: Keep one hatchery slot free — to go help while participating in events / races." }
+    ]
+  },
+  { 
+    id: "league-1", 
+    name: "LEAGUE", 
+    type: "League", 
+    duration: "2 Days", 
+    minPts: "8,000", 
+    reward: "Food", 
+    rewardIcon: ICONS.FOOD,
+    chestIcon: ICONS.LEAGUE, 
+    startIso: "2026-08-23T16:00:00Z", 
+    endIso: "2026-08-25T16:00:00Z", 
+    isSkip: false,
+    strategy: [
+      { icon: "⚔️", text: "Save League resets and fight immediately on start." },
+      { icon: "💡", text: "Reset opponent list if dragons are too high level." }
+    ]
+  },
+  { 
+    id: "arena-1", 
+    name: "ARENA", 
+    type: "Arena", 
+    duration: "3 Days", 
+    minPts: "10,000", 
+    reward: "Gems", 
+    rewardIcon: ICONS.GEMS,
+    chestIcon: ICONS.ARENA, 
+    startIso: "2026-08-25T16:00:00Z", 
+    endIso: "2026-08-28T16:00:00Z", 
+    isSkip: false,
+    strategy: [
+      { icon: "🏆", text: "Battle in Arenas continuously. Avoid rushing arena levels." },
+      { icon: "💎", text: "Collect free arena rush points from daily free spins." }
+    ]
+  },
+  { 
+    id: "e-breed-1", 
+    name: "E - BREED", 
+    type: "Breed", 
+    duration: "2 Days", 
+    minPts: "SKIP", 
+    reward: "—", 
+    rewardIcon: null,
+    chestIcon: ICONS.E_BREED, 
+    startIso: "2026-08-28T16:00:00Z", 
+    endIso: "2026-08-30T16:00:00Z", 
+    isSkip: true,
+    strategy: [
+      { icon: "💖", text: "E-Breed event is SKIP period. Save gems and rest for upcoming Hatch chest." }
+    ]
+  },
+  { 
+    id: "hatch-2", 
+    name: "HATCH", 
+    type: "Hatch", 
+    duration: "2 Days", 
+    minPts: "8,750", 
+    reward: "Food", 
+    rewardIcon: ICONS.FOOD,
+    chestIcon: ICONS.HATCH, 
+    startIso: "2026-08-30T16:00:00Z", 
+    endIso: "2026-09-01T16:00:00Z", 
+    isSkip: false,
+    strategy: [
+      { icon: "🥚", text: "Hatch fast dragons to reach 8,750 minimum." }
+    ]
+  }
 ];
 
 function formatLocalTime(isoString) {
@@ -301,45 +488,182 @@ function formatLocalTime(isoString) {
   return d.toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
-function renderLocalSchedule() {
-  const tbody = document.getElementById('scheduleTableBody');
-  tbody.innerHTML = '';
-  chestEvents.forEach(evt => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td><b>${evt.name}</b></td>
-      <td>${evt.duration}</td>
-      <td><b style="color: var(--accent);">${formatLocalTime(evt.dateIso)}</b></td>
-      <td>${evt.min}</td>
-      <td>${evt.reward}</td>
-      <td><span class="badge ${evt.badge}">${evt.status}</span></td>
-    `;
-    tbody.appendChild(row);
-  });
-  document.getElementById('activeLocalTime').textContent = "Start Time: " + formatLocalTime(chestEvents[0].dateIso);
+function formatLocalDateShort(isoString) {
+  const d = new Date(isoString);
+  return d.toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-function updateCountdown() {
-  const now = new Date();
-  let nextEvent = chestEvents.find(evt => new Date(evt.dateIso) > now);
+function renderChestList() {
+  const container = document.getElementById('chestListContainer');
+  container.innerHTML = '';
 
-  if (!nextEvent) {
-    document.getElementById('nextEventName').textContent = "All scheduled events finished";
-    document.getElementById('countdownTimer').textContent = "00d 00h 00m 00s";
-    return;
+  const now = new Date();
+
+  chestEvents.forEach(evt => {
+    const start = new Date(evt.startIso);
+    const end = new Date(evt.endIso);
+    const isOngoing = (now >= start && now <= end);
+
+    const div = document.createElement('div');
+    let extraClass = '';
+    if (isOngoing) extraClass = 'active-item';
+    else if (evt.isSkip) extraClass = 'skip-item';
+
+    div.className = `chest-item ${extraClass}`;
+
+    // Rule: Breed event in monthly schedule shows ONLY Orb icon (No title). Non-breed shows Title.
+    let leftInfoHtml = '';
+    if (evt.isSkip) {
+      leftInfoHtml = `
+        <div class="chest-item-left">
+          <img src="${evt.chestIcon}" class="chest-icon" alt="${evt.name}">
+          <div class="chest-info">
+            <div class="chest-sub">${formatLocalDateShort(evt.startIso)} • ${evt.duration}</div>
+          </div>
+        </div>
+      `;
+    } else {
+      leftInfoHtml = `
+        <div class="chest-item-left">
+          <img src="${evt.chestIcon}" class="chest-icon" alt="${evt.name}">
+          <div class="chest-info">
+            <div class="chest-name">${evt.name}</div>
+            <div class="chest-sub">${formatLocalDateShort(evt.startIso)} • ${evt.duration}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    let rightPtsHtml = '';
+    if (evt.isSkip) {
+      rightPtsHtml = `
+        <div class="pts-box">
+          <div class="pts-val skip-val">SKIP</div>
+          <div class="pts-label">MIN PTS</div>
+        </div>
+      `;
+    } else {
+      rightPtsHtml = `
+        <div class="pts-box">
+          <div class="pts-val">${evt.minPts}</div>
+          <div class="pts-label">MIN PTS</div>
+        </div>
+      `;
+    }
+
+    div.innerHTML = `
+      ${leftInfoHtml}
+      <div class="chest-item-right">
+        ${rightPtsHtml}
+      </div>
+    `;
+
+    container.appendChild(div);
+  });
+}
+
+function updateTrackerState() {
+  const now = new Date();
+  
+  // Check active event
+  let activeEvent = chestEvents.find(e => now >= new Date(e.startIso) && now <= new Date(e.endIso));
+  // Check upcoming event
+  let nextEvent = chestEvents.find(e => new Date(e.startIso) > now);
+
+  const bannerIcon = document.getElementById('bannerIcon');
+  const bannerStatusBadge = document.getElementById('bannerStatusBadge');
+  const bannerTitle = document.getElementById('bannerTitle');
+  const bannerDuration = document.getElementById('bannerDuration');
+  const bannerMinPts = document.getElementById('bannerMinPts');
+  const bannerNextUp = document.getElementById('bannerNextUp');
+  const timerHeadline = document.getElementById('timerHeadline');
+  const localStartFootnote = document.getElementById('localStartFootnote');
+  const strategyContent = document.getElementById('strategyContent');
+
+  let targetTime = null;
+
+  if (activeEvent) {
+    // ACTIVE / ONGOING EVENT OR RESTING EVENT
+    bannerIcon.src = activeEvent.chestIcon;
+    bannerDuration.textContent = activeEvent.duration;
+    bannerMinPts.textContent = activeEvent.minPts;
+    if (activeEvent.isSkip) {
+      bannerMinPts.style.color = "var(--accent-red)";
+    } else {
+      bannerMinPts.style.color = "var(--accent-gold)";
+    }
+
+    if (activeEvent.isSkip) {
+      // It is RESTING / BREED PERIOD
+      bannerStatusBadge.className = "status-badge status-resting";
+      bannerStatusBadge.textContent = "REST PERIOD";
+      bannerTitle.textContent = "RESTING";
+      timerHeadline.textContent = "NEXT CHEST BEGINS IN";
+      targetTime = new Date(activeEvent.endIso);
+      
+      if (nextEvent) bannerNextUp.textContent = nextEvent.name;
+      else bannerNextUp.textContent = "END OF SEASON";
+
+      localStartFootnote.textContent = "Next event starts local time: " + formatLocalTime(activeEvent.endIso);
+    } else {
+      // IT IS ACTIVE REGULAR CHEST
+      bannerStatusBadge.className = "status-badge status-active";
+      bannerStatusBadge.textContent = "LIVE NOW";
+      bannerTitle.textContent = activeEvent.name + " CHEST";
+      timerHeadline.textContent = "CHEST ENDS IN";
+      targetTime = new Date(activeEvent.endIso);
+
+      if (nextEvent) bannerNextUp.textContent = nextEvent.name;
+      else bannerNextUp.textContent = "END OF SEASON";
+
+      localStartFootnote.textContent = "Chest ends local time: " + formatLocalTime(activeEvent.endIso);
+    }
+
+    // Populate strategy
+    strategyContent.innerHTML = '';
+    activeEvent.strategy.forEach(s => {
+      strategyContent.innerHTML += `<div class="strategy-item"><span class="strategy-icon">${s.icon}</span><span>${s.text}</span></div>`;
+    });
+
+  } else if (nextEvent) {
+    // UPCOMING EVENT BEFORE ANYTHING STARTED
+    bannerIcon.src = nextEvent.chestIcon;
+    bannerDuration.textContent = nextEvent.duration;
+    bannerMinPts.textContent = nextEvent.minPts;
+    bannerStatusBadge.className = "status-badge status-resting";
+    bannerStatusBadge.textContent = "UPCOMING";
+    bannerTitle.textContent = nextEvent.name;
+    timerHeadline.textContent = "NEXT CHEST BEGINS IN";
+    targetTime = new Date(nextEvent.startIso);
+    bannerNextUp.textContent = nextEvent.name;
+    localStartFootnote.textContent = "Starts local time: " + formatLocalTime(nextEvent.startIso);
+
+    strategyContent.innerHTML = '';
+    nextEvent.strategy.forEach(s => {
+      strategyContent.innerHTML += `<div class="strategy-item"><span class="strategy-icon">${s.icon}</span><span>${s.text}</span></div>`;
+    });
   }
 
-  document.getElementById('nextEventName').textContent = nextEvent.name + " (" + nextEvent.duration + ")";
-  document.getElementById('nextEventLocalTime').textContent = "Exact Local Start: " + formatLocalTime(nextEvent.dateIso);
+  // COUNTDOWN COMPUTATION
+  if (targetTime) {
+    const diff = targetTime - now;
+    if (diff > 0) {
+      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const m = Math.floor((diff / 1000 / 60) % 60);
+      const s = Math.floor((diff / 1000) % 60);
 
-  const diff = new Date(nextEvent.dateIso) - now;
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-  const minutes = Math.floor((diff / 1000 / 60) % 60);
-  const seconds = Math.floor((diff / 1000) % 60);
-
-  document.getElementById('countdownTimer').textContent = 
-    `${String(days).padStart(2, '0')}d ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
+      document.getElementById('tDays').textContent = String(d).padStart(2, '0');
+      document.getElementById('tHours').textContent = String(h).padStart(2, '0');
+      document.getElementById('tMins').textContent = String(m).padStart(2, '0');
+      document.getElementById('tSecs').textContent = String(s).padStart(2, '0');
+    } else {
+      document.getElementById('tDays').textContent = "00";
+      document.getElementById('tHours').textContent = "00";
+      document.getElementById('tMins').textContent = "00";
+      document.getElementById('tSecs').textContent = "00";
+    }
+  }
 }
 
 function switchTab(evt, tabId) {
@@ -349,7 +673,7 @@ function switchTab(evt, tabId) {
   evt.currentTarget.classList.add('active');
 }
 
-// DEFAULT PING MESSAGE LOGIC
+// DISCORD PINGER LOGIC
 const defaultTemplate = `**[The {EVENT_NAME}]** Begins Now\n\nDuration: {DURATION}\nMin pts: {MIN_PTS}\nReward: {REWARD}`;
 
 function loadPresetMessage() {
@@ -391,12 +715,12 @@ function sendDiscordPing() {
   });
 }
 
-renderLocalSchedule();
-updateCountdown();
-setInterval(updateCountdown, 1000);
+// INITIALIZE
+renderChestList();
+updateTrackerState();
+setInterval(updateTrackerState, 1000);
 loadPresetMessage();
 </script>
 
 </body>
 </html>
-</file>
