@@ -745,47 +745,6 @@ function switchTab(evt, tabId) {
   evt.currentTarget.classList.add('active');
 }
 
-// DISCORD PINGER LOGIC
-const defaultTemplate = `**[The {EVENT_NAME}]** Begins Now\n\nDuration: {DURATION}\nMin pts: {MIN_PTS}\nReward: {REWARD}`;
-
-function loadPresetMessage() {
-  document.getElementById('customMessageTemplate').value = defaultTemplate;
-  updateMessagePreview();
-}
-
-function resetDefaultMessage() {
-  loadPresetMessage();
-}
-
-function updateMessagePreview() {
-  const selectedData = document.getElementById('pingChestSelect').value.split('|');
-  const tag = document.getElementById('pingTag').value.trim();
-  let template = document.getElementById('customMessageTemplate').value;
-
-  template = template.replace('{EVENT_NAME}', selectedData[0]);
-  template = template.replace('{DURATION}', selectedData[1]);
-  template = template.replace('{MIN_PTS}', selectedData[2]);
-  template = template.replace('{REWARD}', selectedData[3]);
-
-  const finalOutput = (tag ? tag + "\n" : "") + template;
-  document.getElementById('msgPreview').textContent = finalOutput;
-}
-
-function sendDiscordPing() {
-  const url = document.getElementById('webhookUrl').value.trim();
-  if (!url) { alert("Please enter a valid Discord Webhook URL."); return; }
-
-  const messageText = document.getElementById('msgPreview').textContent;
-  fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ content: messageText })
-  })
-  .then(res => {
-    if (res.ok) alert("Discord ping sent successfully!");
-    else alert("Failed to send message. Check Webhook URL.");
-  });
-}
 
 // DISCORD PINGER LOGIC
 const defaultTemplate = `**[The {EVENT_NAME}]** Begins Now\n\nDuration: {DURATION}\nMin pts: {MIN_PTS}\nReward: {REWARD}`;
