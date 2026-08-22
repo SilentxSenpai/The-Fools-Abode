@@ -6,13 +6,13 @@
   <title>DC Archives - Alliance Event Tracker</title>
   <style>
     :root {
-      --bg-color: #0f172a;
-      --card-bg: #1e293b;
+      --bg-color: #0d1117;
+      --card-bg: #161b22;
       --accent-gold: #f59e0b;
       --accent-red: #ef4444;
       --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --border-color: #334155;
+      --text-muted: #8b949e;
+      --border-color: #30363d;
     }
 
     body {
@@ -34,79 +34,153 @@
       gap: 20px;
     }
 
+    .icon-img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+
+    .icon-img-large {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+    }
+
     /* DC ARCHIVES CARD HEADER */
     .card-banner {
       background: var(--card-bg);
-      border: 2px solid var(--border-color);
+      border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 20px;
+      padding: 24px;
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+      display: flex;
+      gap: 24px;
+    }
+
+    .card-left {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      min-width: 140px;
+    }
+
+    .card-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
     .banner-header {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 12px;
-      margin-bottom: 15px;
+      gap: 12px;
     }
 
     .banner-title {
-      font-size: 1.25rem;
-      font-weight: bold;
-      color: var(--accent-gold);
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #ffffff;
+      text-transform: uppercase;
     }
 
     .badge-resting {
-      background-color: #3b82f6;
+      background-color: #8b5cf6;
       color: #fff;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 0.85rem;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
       font-weight: bold;
-      letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
 
     .banner-body {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 15px;
-      margin-bottom: 15px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
     }
 
     .info-box {
-      background: rgba(0,0,0,0.2);
+      background: rgba(0,0,0,0.3);
       padding: 10px;
       border-radius: 8px;
       text-align: center;
+      border: 1px solid rgba(255,255,255,0.05);
     }
 
     .info-label {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: var(--text-muted);
       text-transform: uppercase;
+      font-weight: bold;
       margin-bottom: 4px;
     }
 
     .info-value {
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: bold;
     }
 
-    .skip-red { color: var(--accent-red); }
+    .timer-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .timer-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .timer-boxes {
+      display: flex;
+      gap: 8px;
+    }
+
+    .time-box {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 8px 12px;
+      text-align: center;
+      min-width: 45px;
+    }
+
+    .time-val {
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .time-unit {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
 
     .strategy-notes {
-      background: rgba(245, 158, 11, 0.05);
-      border-left: 4px solid var(--accent-gold);
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
       padding: 12px;
-      border-radius: 0 8px 8px 0;
-      font-size: 0.9rem;
-      line-height: 1.4;
+      font-size: 0.85rem;
+      line-height: 1.5;
     }
+
+    .strategy-item {
+      margin-bottom: 8px;
+    }
+    .strategy-item:last-child { margin-bottom: 0; }
 
     /* MONTHLY SCHEDULE LIST */
     .schedule-section {
@@ -116,20 +190,60 @@
       padding: 20px;
     }
 
+    .schedule-header {
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+
+    .schedule-header span {
+      color: var(--accent-gold);
+    }
+
     .event-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border-color);
+      padding: 14px 16px;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-bottom: 10px;
     }
-
-    .event-item:last-child { border-bottom: none; }
 
     .event-details {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 16px;
+    }
+
+    .event-title {
+      font-weight: 800;
+      font-size: 1rem;
+      text-transform: uppercase;
+    }
+
+    .event-date {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .event-points {
+      text-align: right;
+    }
+
+    .pts-val {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--accent-gold);
+    }
+
+    .pts-label {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
     }
 
     /* DISCORD PINGER */
@@ -159,63 +273,192 @@
 
   <!-- DC ARCHIVES CARD HEADER -->
   <div class="card-banner">
-    <div class="banner-header">
-      <div class="banner-title">
-        <span>🔮</span> L-Breed Event
-      </div>
-      <span class="badge-resting">RESTING / REST PERIOD</span>
+    <div class="card-left">
+      <img src="https://dcarchives.pages.dev/assets/orb_lbreed.png" alt="L-Breed Orb" class="icon-img-large" onerror="this.src='https://dcarchives.pages.dev/assets/orb_breed.png'">
     </div>
+    
+    <div class="card-right">
+      <div class="banner-header">
+        <span class="badge-resting">REST PERIOD</span>
+        <div class="banner-title">RESTING</div>
+      </div>
 
-    <div class="banner-body">
-      <div class="info-box">
-        <div class="info-label">Orb Type</div>
-        <div class="info-value">L-Breed / E-Breed</div>
+      <div class="banner-body">
+        <div class="info-box">
+          <div class="info-label">Duration</div>
+          <div class="info-value">2 Days</div>
+        </div>
+        <div class="info-box">
+          <div class="info-label">Min Points</div>
+          <div class="info-value" style="color: var(--accent-gold);">9,000</div>
+        </div>
+        <div class="info-box">
+          <div class="info-label">Next Up</div>
+          <div class="info-value">L - Breed</div>
+        </div>
       </div>
-      <div class="info-box">
-        <div class="info-label">Duration</div>
-        <div class="info-value">2 Days</div>
-      </div>
-      <div class="info-box">
-        <div class="info-label">Min. Points</div>
-        <div class="info-value skip-red">SKIP</div>
-      </div>
-      <div class="info-box">
-        <div class="info-label">Starts In</div>
-        <div class="info-value" id="countdown">Calculating...</div>
-      </div>
-    </div>
 
-    <div class="strategy-notes">
-      <strong>Strategy Notes:</strong> Use Flame x Terra for quick breeding points. Prep Pure x Terra in advance and ensure your hatchery slots are clear prior to event start.
+      <div class="timer-section">
+        <div class="timer-label">⏱️ NEXT CHEST BEGINS IN</div>
+        <div class="timer-boxes">
+          <div class="time-box"><div class="time-val" id="t-days">00</div><div class="time-unit">Days</div></div>
+          <div class="time-box"><div class="time-val" id="t-hours">00</div><div class="time-unit">Hours</div></div>
+          <div class="time-box"><div class="time-box-inner"><div class="time-val" id="t-mins">00</div><div class="time-unit">Mins</div></div></div>
+          <div class="time-box"><div class="time-val" id="t-secs">00</div><div class="time-unit">Secs</div></div>
+        </div>
+      </div>
+
+      <div class="strategy-notes">
+        <div style="font-weight: bold; color: #38bdf8; margin-bottom: 6px; text-transform: uppercase; font-size: 0.75rem;">🛠 Strategy Notes</div>
+        <div class="strategy-item">🎯 <strong>ACTIVE:</strong> Breed "Flame × Terra" for the 16-hour breed = 1,189 pts. Eggs hatch in 2 mins!</div>
+        <div class="strategy-item">💡 <strong>PREP (16-44H EARLY):</strong> Stock "Pure × Terra" or "Flame × Terra" beforehand for a good start.</div>
+        <div class="strategy-item">💎 <strong>PRO TIP:</strong> Keep one hatchery slot free — huge help while participating in events / races.</div>
+      </div>
     </div>
   </div>
 
   <!-- MONTHLY SCHEDULE LIST -->
   <div class="schedule-section">
-    <h3>Monthly Schedule</h3>
+    <div class="schedule-header">THIS <span>MONTH'S</span> CHESTS</div>
     
-    <!-- Breed Event Display -->
     <div class="event-item">
       <div class="event-details">
-        <span>🔮</span>
+        <img src="https://dcarchives.pages.dev/assets/chest_hatch.png" alt="Hatch" class="icon-img">
         <div>
-          <strong>L-Breed Event</strong>
-          <div style="font-size: 0.8rem; color: var(--text-muted);" id="breed-schedule-date">Starts: Today at 9:30 PM (2 Days)</div>
+          <div class="event-title">HATCH</div>
+          <div class="event-date">Aug 18, 2026 • 3 Days (9:30 PM IST)</div>
         </div>
       </div>
-      <span class="skip-red" style="font-weight: bold;">SKIP</span>
+      <div class="event-points">
+        <div class="pts-val">13,000</div>
+        <div class="pts-label">MIN PTS</div>
+      </div>
     </div>
 
-    <!-- Regular Chest Event Display -->
     <div class="event-item">
       <div class="event-details">
-        <span>⚔️</span>
+        <img src="https://dcarchives.pages.dev/assets/orb_lbreed.png" alt="L-Breed" class="icon-img" onerror="this.src='https://dcarchives.pages.dev/assets/orb_breed.png'">
         <div>
-          <strong>Arena Chest Event</strong>
-          <div style="font-size: 0.8rem; color: var(--text-muted);" id="arena-schedule-date">Starts: Aug 24, 9:30 PM (3 Days)</div>
+          <div class="event-title">L - BREED</div>
+          <div class="event-date">Aug 22, 2026 • 2 Days (9:30 PM IST)</div>
         </div>
       </div>
-      <span style="color: var(--accent-gold); font-weight: bold;">Req: 12,000 pts</span>
+      <div class="event-points">
+        <div class="pts-val">9,000</div>
+        <div class="pts-label">MIN PTS</div>
+      </div>
+    </div>
+
+    <div class="event-item">
+      <div class="event-details">
+        <img src="https://dcarchives.pages.dev/assets/chest_league.png" alt="League" class="icon-img">
+        <div>
+          <div class="event-title">LEAGUE</div>
+          <div class="event-date">Aug 25, 2026 • 2 Days (9:30 PM IST)</div>
+        </div>
+      </div>
+      <div class="event-points">
+        <div class="pts-val">8,000</div>
+        <div class="pts-label">MIN PTS</div>
+      </div>
+    </div>
+
+    <div class="event-item">
+      <div class="event-details">
+        <img src="https://dcarchives.pages.dev/assets/chest_arena.png" alt="Arena" class="icon-img">
+        <div>
+          <div class="event-title">ARENA</div>
+          <div class="event-date">Aug 28, 2026 • 3 Days (9:30 PM IST)</div>
+        </div>
+      </div>
+      <div class="event-points">
+        <div class="pts-val">10,000</div>
+        <div class="pts-label">MIN PTS</div>
+      </div>
+    </div>
+
+    <div class="event-item">
+      <div class="event-details">
+        <img src="https://dcarchives.pages.dev/assets/orb_ebreed.png" alt="E-Breed" class="icon-img" onerror="this.src='https://dcarchives.pages.dev/assets/orb_breed.png'">
+        <div>
+          <div class="event-title">E - BREED</div>
+          <div class="event-date">Sep 1, 2026 • 3 Days (9:30 PM IST)</div>
+        </div>
+      </div>
+      <div class="event-points">
+        <div class="pts-val">13,250</div>
+        <div class="pts-label">MIN PTS</div>
+      </div>
+    </div>
+
+    <div class="event-item">
+      <div class="event-details">
+        <img src="https://dcarchives.pages.dev/assets/chest_hatch.png" alt="Hatch" class="icon-img">
+        <div>
+          <div class="event-title">HATCH</div>
+          <div class="event-date">Sep 5, 2026 • 2 Days (9:30 PM IST)</div>
+        </div>
+      </div>
+      <div class="event-points">
+        <div class="pts-val">8,750</div>
+        <div class="pts-label">MIN PTS</div>
+      </div>
+    </div>
+
+    <div class="event-item">
+      <div class="event-details">
+        <img src="https://dcarchives.pages.dev/assets/chest_arena.png" alt="Arena" class="icon-img">
+        <div>
+          <div class="event-title">ARENA</div>
+          <div class="event-date">Sep 8, 2026 • 2 Days (9:30 PM IST)</div>
+        </div>
+      </div>
+      <div class="event-points">
+        <div class="pts-val">7,100</div>
+        <div class="pts-label">MIN PTS</div>
+      </div>
+    </div>
+
+    <div class="event-item">
+      <div class="event-details">
+        <img src="https://dcarchives.pages.dev/assets/orb_lbreed.png" alt="L-Breed" class="icon-img" onerror="this.src='https://dcarchives.pages.dev/assets/orb_breed.png'">
+        <div>
+          <div class="event-title">L - BREED</div>
+          <div class="event-date">Sep 11, 2026 • 3 Days (9:30 PM IST)</div>
+        </div>
+      </div>
+      <div class="event-points">
+        <div class="pts-val">13,250</div>
+        <div class="pts-label">MIN PTS</div>
+      </div>
+    </div>
+
+    <div class="event-item">
+      <div class="event-details">
+        <img src="https://dcarchives.pages.dev/assets/chest_league.png" alt="League" class="icon-img">
+        <div>
+          <div class="event-title">LEAGUE</div>
+          <div class="event-date">Sep 15, 2026 • 2 Days (9:30 PM IST)</div>
+        </div>
+      </div>
+      <div class="event-points">
+        <div class="pts-val">8,000</div>
+        <div class="pts-label">MIN PTS</div>
+      </div>
+    </div>
+
+    <div class="event-item">
+      <div class="event-details">
+        <img src="https://dcarchives.pages.dev/assets/chest_hatch.png" alt="Hatch" class="icon-img">
+        <div>
+          <div class="event-title">HATCH</div>
+          <div class="event-date">Sep 18, 2026 • 3 Days (9:30 PM IST)</div>
+        </div>
+      </div>
+      <div class="event-points">
+        <div class="pts-val">13,000</div>
+        <div class="pts-label">MIN PTS</div>
+      </div>
     </div>
   </div>
 
@@ -223,39 +466,38 @@
   <div class="pinger-section">
     <h3>Discord Text Pinger</h3>
     <label for="pingMsg" style="font-size: 0.85rem; color: var(--text-muted);">Configured Live Preview Output:</label>
-    <textarea id="pingMsg" readonly>@everyone 🚨 **RESTING PERIOD ACTIVE**: L-Breed event starts tonight at 9:30 PM! Min points: SKIP. Prep hatchery slots for the upcoming Arena Chest!</textarea>
+    <textarea id="pingMsg" readonly>@everyone 🚨 **REST PERIOD ACTIVE**: L-Breed event starts tonight at 9:30 PM IST! Min points: 9,000. Prep hatchery slots for the upcoming event!</textarea>
   </div>
 
 </div>
 
 <script>
-  // Set L-Breed Start Time dynamically to 9:30 PM Local Time Today
-  const lBreedStartTime = new Date();
-  lBreedStartTime.setHours(21, 30, 0, 0); // 21:30 is 9:30 PM
+  // Set Next Chest Start Time to August 22, 2026, 21:30:00 IST (UTC+5:30)
+  const nextChestTime = new Date("2026-08-22T21:30:00+05:30").getTime();
 
-  // Format local time display for the schedule
-  document.getElementById('breed-schedule-date').innerText = 
-    `Starts (Local): Today, ${lBreedStartTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} (2 Days)`;
-
-  // Countdown timer function
   function updateCountdown() {
     const now = new Date().getTime();
-    const distance = lBreedStartTime.getTime() - now;
+    const distance = nextChestTime - now;
 
-    if (distance < 0) {
-      document.getElementById('countdown').innerText = "LIVE NOW";
+    if (distance <= 0) {
+      document.getElementById('t-days').innerText = "00";
+      document.getElementById('t-hours').innerText = "00";
+      document.getElementById('t-mins').innerText = "00";
+      document.getElementById('t-secs').innerText = "00";
       return;
     }
 
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
     const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    document.getElementById('countdown').innerText = 
-      `${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
+    document.getElementById('t-days').innerText = String(days).padStart(2, '0');
+    document.getElementById('t-hours').innerText = String(hours).padStart(2, '0');
+    document.getElementById('t-mins').innerText = String(minutes).padStart(2, '0');
+    document.getElementById('t-secs').innerText = String(seconds).padStart(2, '0');
   }
 
-  // Update immediately and then every second
   updateCountdown();
   setInterval(updateCountdown, 1000);
 </script>
