@@ -1,725 +1,263 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Fool's Abode - Alliance Hub & Chest Tracker</title>
-<style>
-  :root {
-    --bg-main: #060814;
-    --bg-card: #0d1124;
-    --bg-card-inner: #131936;
-    --border-color: #1e294d;
-    --accent-purple: #a970ff;
-    --accent-cyan: #00d2ff;
-    --accent-green: #2ecc71;
-    --accent-gold: #ffb834;
-    --accent-red: #ff4757;
-    --text-muted: #8b9bb4;
-    --text-light: #e2e8f0;
-    --discord-color: #5865F2;
-  }
-  
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-  body { background: var(--bg-main); color: #fff; padding-bottom: 60px; min-height: 100vh; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DC Archives - Alliance Event Tracker</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --accent-gold: #f59e0b;
+      --accent-red: #ef4444;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+    }
 
-  /* HEADER */
-  header {
-    padding: 16px 6%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #090c1e;
-    border-bottom: 1px solid var(--border-color);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .logo-header-group { display: flex; align-items: center; gap: 14px; }
-  .alliance-logo-img { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--accent-purple); object-fit: cover; background: #030b1e; }
-  .logo-container { display: flex; flex-direction: column; }
-  .logo { font-size: 20px; font-weight: 800; tracking: 0.5px; }
-  .logo span { color: var(--accent-purple); }
-  .author-credit { font-size: 11px; color: var(--text-muted); font-style: italic; margin-top: -2px; }
-  
-  nav { display: flex; gap: 8px; }
-  nav button {
-    background: transparent;
-    border: 1px solid transparent;
-    color: var(--text-muted);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    padding: 8px 16px;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-  }
-  nav button.active, nav button:hover {
-    background: #182042;
-    color: var(--accent-purple);
-    border-color: #2a386c;
-  }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-  /* CONTAINER & TABS */
-  .container { padding: 25px 6%; max-width: 1300px; margin: auto; }
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
+    .container {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
 
-  /* RESTING / ACTIVE CARD BANNER */
-  .banner-card {
-    background: linear-gradient(135deg, #0d122b 0%, #080a18 100%);
-    border: 1px solid #1e2b58;
-    border-radius: 20px;
-    padding: 28px;
-    margin-bottom: 35px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 30px;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .banner-card::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -10%;
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(circle, rgba(169, 112, 255, 0.12) 0%, rgba(0,0,0,0) 70%);
-    pointer-events: none;
-  }
+    /* DC ARCHIVES CARD HEADER */
+    .card-banner {
+      background: var(--card-bg);
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    }
 
-  .banner-left {
-    display: flex;
-    align-items: center;
-    gap: 25px;
-    flex: 1;
-    min-width: 300px;
-  }
+    .banner-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 12px;
+      margin-bottom: 15px;
+    }
 
-  .banner-icon-box {
-    width: 130px;
-    height: 130px;
-    background: radial-gradient(circle, #182247 0%, #0a0e21 100%);
-    border: 2px solid #2a3c75;
-    border-radius: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: inset 0 0 15px rgba(0,0,0,0.6), 0 0 20px rgba(0,0,0,0.4);
-    flex-shrink: 0;
-  }
-  .banner-icon-box img { width: 95px; height: 95px; object-fit: contain; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5)); }
+    .banner-title {
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: var(--accent-gold);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-  .banner-details { display: flex; flex-direction: column; gap: 8px; }
-  .status-badge {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 6px;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    width: fit-content;
-  }
-  .status-resting { background: rgba(169, 112, 255, 0.2); color: #c89bff; border: 1px solid rgba(169, 112, 255, 0.4); }
-  .status-active { background: rgba(46, 204, 113, 0.2); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.4); }
-  .status-skip { background: rgba(255, 71, 87, 0.2); color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.4); }
+    .badge-resting {
+      background-color: #3b82f6;
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
 
-  .banner-title { font-size: 32px; font-weight: 900; letter-spacing: 1px; color: #fff; text-transform: uppercase; }
-  
-  .stats-row { display: flex; gap: 15px; margin-top: 4px; flex-wrap: wrap; }
-  .stat-box { background: var(--bg-card-inner); border: 1px solid #1a2448; padding: 8px 14px; border-radius: 10px; min-width: 90px; }
-  .stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
-  .stat-val { font-size: 14px; font-weight: 800; color: #fff; margin-top: 2px; }
+    .banner-body {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-bottom: 15px;
+    }
 
-  /* TIMER SECTION */
-  .timer-section {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    border-left: 1px solid #1a254a;
-    padding-left: 30px;
-    min-width: 280px;
-  }
-  @media (max-width: 850px) {
-    .timer-section { border-left: none; padding-left: 0; border-top: 1px solid #1a254a; padding-top: 20px; width: 100%; }
-  }
+    .info-box {
+      background: rgba(0,0,0,0.2);
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+    }
 
-  .timer-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; }
-  .timer-boxes { display: flex; gap: 10px; margin-top: 10px; }
-  .time-card {
-    background: #111730;
-    border: 1px solid #22305c;
-    border-radius: 10px;
-    padding: 8px 12px;
-    text-align: center;
-    min-width: 58px;
-  }
-  .time-num { font-size: 22px; font-weight: 900; color: var(--accent-gold); font-family: monospace; }
-  .time-sub { font-size: 9px; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; font-weight: 700; }
+    .info-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
 
-  /* STRATEGY NOTES PANEL */
-  .strategy-panel {
-    background: #0b0f22;
-    border: 1px solid #1a2448;
-    border-radius: 14px;
-    padding: 16px;
-    width: 100%;
-    margin-top: 10px;
-  }
-  .strategy-title { font-size: 11px; font-weight: 800; color: var(--accent-purple); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
-  .strategy-item { display: flex; gap: 10px; font-size: 12px; color: var(--text-light); margin-bottom: 8px; line-height: 1.4; }
-  .strategy-item:last-child { margin-bottom: 0; }
-  .strategy-icon { font-size: 14px; flex-shrink: 0; }
+    .info-value {
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
 
-  /* CHEST TRACKER LIST */
-  .section-header { font-size: 14px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
-  
-  .chest-list { display: flex; flex-direction: column; gap: 10px; }
-  .chest-item {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 14px;
-    padding: 14px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: transform 0.2s, border-color 0.2s;
-  }
-  .chest-item:hover { border-color: #2b3b6e; transform: translateY(-2px); }
-  .chest-item.active-item { border-color: var(--accent-green); background: linear-gradient(90deg, #0d1627 0%, #0d1124 100%); }
-  .chest-item.skip-item { border-color: #381a24; opacity: 0.85; }
+    .skip-red { color: var(--accent-red); }
 
-  .chest-item-left { display: flex; align-items: center; gap: 16px; }
-  .chest-icon { width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5)); }
-  .chest-info { display: flex; flex-direction: column; gap: 3px; }
-  .chest-name { font-size: 15px; font-weight: 800; color: #fff; letter-spacing: 0.5px; }
-  .chest-sub { font-size: 12px; color: var(--text-muted); }
+    .strategy-notes {
+      background: rgba(245, 158, 11, 0.05);
+      border-left: 4px solid var(--accent-gold);
+      padding: 12px;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
 
-  .chest-item-right { display: flex; align-items: center; gap: 20px; text-align: right; }
-  .pts-box { display: flex; flex-direction: column; align-items: flex-end; }
-  .pts-val { font-size: 14px; font-weight: 800; color: var(--accent-gold); }
-  .pts-val.skip-val { color: var(--accent-red); font-weight: 700; }
-  .pts-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+    /* MONTHLY SCHEDULE LIST */
+    .schedule-section {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+    }
 
-  /* DISCORD PINGER TAB */
-  .grid-pinger { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  @media (max-width: 800px) { .grid-pinger { grid-template-columns: 1fr; } }
+    .event-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
 
-  .tool-box { background: var(--bg-card); border: 1px solid var(--border-color); padding: 22px; border-radius: 16px; }
-  .form-group { margin-bottom: 16px; }
-  label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 13px; font-weight: 600; }
-  input, select, textarea { width: 100%; padding: 11px 14px; border-radius: 8px; background: #070a17; color: #fff; border: 1px solid var(--border-color); outline: none; font-size: 13px; }
-  input:focus, select:focus, textarea:focus { border-color: var(--accent-purple); }
+    .event-item:last-child { border-bottom: none; }
 
-  .btn-discord { width: 100%; padding: 12px; background: var(--discord-color); border: none; border-radius: 8px; color: #fff; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 14px; margin-top: 10px; }
-  .btn-discord:hover { background: #4752c4; }
-  .btn-reset { background: #1f1b3a; color: var(--accent-purple); border: 1px solid #3d2f66; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700; margin-top: 6px; }
-</style>
+    .event-details {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* DISCORD PINGER */
+    .pinger-section {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 80px;
+      background: #090d16;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 10px;
+      border-radius: 6px;
+      box-sizing: border-box;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
 
-<header>
-  <div class="logo-header-group">
-    <svg class="alliance-logo-img" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <radialGradient id="bgGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#00d2ff"/>
-          <stop offset="50%" stop-color="#003b6d"/>
-          <stop offset="100%" stop-color="#030b1e"/>
-        </radialGradient>
-      </defs>
-      <circle cx="50" cy="50" r="50" fill="url(#bgGlow)"/>
-      <path d="M 25 55 C 20 25, 60 15, 78 35 C 60 25, 30 35, 32 60 C 33 72, 50 80, 65 75 C 40 85, 20 70, 25 55 Z" fill="#00e5ff" opacity="0.9"/>
-      <path d="M 40 45 C 35 20, 65 20, 82 40 C 68 32, 45 40, 48 58 C 43 52, 38 50, 40 45 Z" fill="#ffffff" opacity="0.95"/>
-      <circle cx="72" cy="38" r="4" fill="#ffffff"/>
-      <circle cx="28" cy="62" r="2.5" fill="#00e5ff"/>
-    </svg>
-    <div class="logo-container">
-      <div class="logo">The Fool's <span>Abode</span></div>
-      <div class="author-credit">Created by silentxsenpai</div>
+<div class="container">
+
+  <!-- DC ARCHIVES CARD HEADER -->
+  <div class="card-banner">
+    <div class="banner-header">
+      <div class="banner-title">
+        <span>🔮</span> L-Breed Event
+      </div>
+      <span class="badge-resting">RESTING / REST PERIOD</span>
+    </div>
+
+    <div class="banner-body">
+      <div class="info-box">
+        <div class="info-label">Orb Type</div>
+        <div class="info-value">L-Breed / E-Breed</div>
+      </div>
+      <div class="info-box">
+        <div class="info-label">Duration</div>
+        <div class="info-value">2 Days</div>
+      </div>
+      <div class="info-box">
+        <div class="info-label">Min. Points</div>
+        <div class="info-value skip-red">SKIP</div>
+      </div>
+      <div class="info-box">
+        <div class="info-label">Starts In</div>
+        <div class="info-value" id="countdown">Calculating...</div>
+      </div>
+    </div>
+
+    <div class="strategy-notes">
+      <strong>Strategy Notes:</strong> Use Flame x Terra for quick breeding points. Prep Pure x Terra in advance and ensure your hatchery slots are clear prior to event start.
     </div>
   </div>
-  <nav>
-    <button class="nav-btn active" onclick="switchTab(event, 'chests')">🏆 Alliance Chest Tracker</button>
-    <button class="nav-btn" onclick="switchTab(event, 'pinger')">🔔 Custom Discord Pinger</button>
-  </nav>
-</header>
 
-<main class="container">
-
-  <!-- TAB 1: ALLIANCE CHEST TRACKER -->
-  <section id="chests" class="tab-content active">
+  <!-- MONTHLY SCHEDULE LIST -->
+  <div class="schedule-section">
+    <h3>Monthly Schedule</h3>
     
-    <!-- TOP DYNAMIC RESTING / ACTIVE CARD BANNER -->
-    <div class="banner-card">
-      <div class="banner-left">
-        <div class="banner-icon-box">
-          <img id="bannerIcon" src="" alt="Chest Icon">
-        </div>
-        <div class="banner-details">
-          <span id="bannerStatusBadge" class="status-badge status-resting">REST PERIOD</span>
-          <div id="bannerTitle" class="banner-title">RESTING</div>
-          
-          <div class="stats-row">
-            <div class="stat-box">
-              <div class="stat-label">Duration</div>
-              <div id="bannerDuration" class="stat-val">2 Days</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label">Min. Points</div>
-              <div id="bannerMinPts" class="stat-val" style="color: var(--accent-gold);">SKIP</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label">Next Up / Active</div>
-              <div id="bannerNextUp" class="stat-val">L - BREED</div>
-            </div>
-          </div>
+    <!-- Breed Event Display -->
+    <div class="event-item">
+      <div class="event-details">
+        <span>🔮</span>
+        <div>
+          <strong>L-Breed Event</strong>
+          <div style="font-size: 0.8rem; color: var(--text-muted);" id="breed-schedule-date">Starts: Today at 9:30 PM (2 Days)</div>
         </div>
       </div>
-
-      <div class="timer-section">
-        <div class="timer-label">
-          <span>⏳</span> <span id="timerHeadline">NEXT CHEST BEGINS IN</span>
-        </div>
-        <div class="timer-boxes">
-          <div class="time-card"><div class="time-num" id="tDays">00</div><div class="time-sub">DAYS</div></div>
-          <div class="time-card"><div class="time-num" id="tHours">00</div><div class="time-sub">HOURS</div></div>
-          <div class="time-card"><div class="time-num" id="tMins">00</div><div class="time-sub">MINS</div></div>
-          <div class="time-card"><div class="time-num" id="tSecs">00</div><div class="time-sub">SECS</div></div>
-        </div>
-        <div id="localStartFootnote" style="font-size: 11px; color: var(--accent-cyan); margin-top: 10px; font-weight: 600;">Starts in your local time: Loading...</div>
-      </div>
-
-      <!-- STRATEGY NOTES -->
-      <div class="strategy-panel">
-        <div class="strategy-title">💡 Strategy Notes & Guide</div>
-        <div id="strategyContent">
-          <!-- Dynamic strategy item based on event -->
-        </div>
-      </div>
+      <span class="skip-red" style="font-weight: bold;">SKIP</span>
     </div>
 
-    <!-- MONTH'S CHESTS SCHEDULE LIST -->
-    <div class="section-header">
-      <span>THIS MONTH'S CHESTS</span>
-      <span style="font-size: 11px; font-weight: 600; color: var(--accent-purple);">Local Standard Time</span>
-    </div>
-
-    <div class="chest-list" id="chestListContainer">
-      <!-- Dynamic Chest Schedule Rows -->
-    </div>
-
-  </section>
-
-  <!-- TAB 2: DISCORD PINGER -->
-  <section id="pinger" class="tab-content">
-    <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 20px; color: #fff;">🔔 Custom Discord Text Pinger</h2>
-    
-    <div class="grid-pinger">
-      <div class="tool-box">
-        <h3 style="font-size: 16px; margin-bottom: 15px; color: var(--accent-purple);">Ping Configuration</h3>
-        
-        <div class="form-group">
-          <label>1. Select Chest Event Preset:</label>
-          <select id="pingChestSelect" onchange="loadPresetMessage()">
-            <option value="Hatch Chest 🥚|3 Days|13k|Food">Hatch Chest 🥚 (3 Days) — 13k Min (Food)</option>
-            <option value="League Chest 🏆|2 Days|8k|Food">League Chest 🏆 (2 Days) — 8k Min (Food)</option>
-            <option value="Arena Chest ⚔️|3 Days|10k|Gems" selected>Arena Chest ⚔️ (3 Days) — 10k Min (Gems)</option>
-            <option value="Hatch Chest 🥚|2 Days|8.75k|Food">Hatch Chest 🥚 (2 Days) — 8.75k Min (Food)</option>
-            <option value="Arena Chest ⚔️|2 Days|7.1k|Gems">Arena Chest ⚔️ (2 Days) — 7.1k Min (Gems)</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>2. Role Tag / Ping (Empty by default):</label>
-          <input type="text" id="pingTag" value="" placeholder="e.g. <@&ROLE_ID>" oninput="updateMessagePreview()">
-        </div>
-
-        <div class="form-group">
-          <label>3. Edit Message Format (Fully Customizable):</label>
-          <textarea id="customMessageTemplate" rows="5" oninput="updateMessagePreview()"></textarea>
-          <button class="btn-reset" onclick="resetDefaultMessage()">Reset to Default Template</button>
-        </div>
-
-        <div class="form-group">
-          <label>4. Discord Webhook URL:</label>
-          <input type="text" id="webhookUrl" placeholder="https://discord.com/api/webhooks/...">
-        </div>
-
-        <button class="btn-discord" onclick="sendDiscordPing()">🚀 Send Ping Now</button>
-      </div>
-
-      <div class="tool-box">
-        <h3 style="font-size: 16px; margin-bottom: 15px; color: var(--accent-cyan);">Live Output Preview</h3>
-        
-        <div class="form-group">
-          <label>Live Output Preview:</label>
-          <div id="msgPreview" style="background: #060914; border: 1px solid var(--border-color); padding: 14px; border-radius: 10px; font-family: monospace; font-size: 13px; white-space: pre-wrap; color: #a970ff; min-height: 150px; line-height: 1.5;"></div>
+    <!-- Regular Chest Event Display -->
+    <div class="event-item">
+      <div class="event-details">
+        <span>⚔️</span>
+        <div>
+          <strong>Arena Chest Event</strong>
+          <div style="font-size: 0.8rem; color: var(--text-muted);" id="arena-schedule-date">Starts: Aug 24, 9:30 PM (3 Days)</div>
         </div>
       </div>
+      <span style="color: var(--accent-gold); font-weight: bold;">Req: 12,000 pts</span>
     </div>
-  </section>
+  </div>
 
-</main>
+  <!-- DISCORD TEXT PINGER -->
+  <div class="pinger-section">
+    <h3>Discord Text Pinger</h3>
+    <label for="pingMsg" style="font-size: 0.85rem; color: var(--text-muted);">Configured Live Preview Output:</label>
+    <textarea id="pingMsg" readonly>@everyone 🚨 **RESTING PERIOD ACTIVE**: L-Breed event starts tonight at 9:30 PM! Min points: SKIP. Prep hatchery slots for the upcoming Arena Chest!</textarea>
+  </div>
+
+</div>
 
 <script>
-// Base64 SVGs embedded directly for icons
-const ICONS = {
-  L_BREED: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0ibE9yYiIgY3g9IjM1JSIgY3k9IjM1JSIgcj0iNjUlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2Y1ZDVmZiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjMwJSIgc3RvcC1jb2xvcj0iI2RmNjJmNiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjcwJSIgc3RvcC1jb2xvcj0iIzhiMWZhMyIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMzZDA2NGQiLz4KICAgIDwvcmFkaWFsR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdvbGRSaW0iIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjZmZlNjk5Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjZDQ5MjI4Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzdhNGEwNiIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iMzgiIGZpbGw9InVybCgjbE9yYikiLz4KICA8ZWxsaXBzZSBjeD0iNDAiIGN5PSIzNSIgcng9IjE0IiByeT0iOCIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC40IiB0cmFuc2Zvcm09InJvdGF0ZSgtMjAgNDAgMzUpIi8+CiAgPCEtLSBUb3AgZGVjb3JhdGl2ZSBnb2xkZW4gc3dpcmwgLS0+CiAgPHBhdGggZD0iTSAyMCAzOCBDIDI1IDE4LCA3NSAxOCwgODAgMzggQyA3MiAyNCwgMjggMjQsIDIwIDM4IFoiIGZpbGw9InVybCgjZ29sZFJpbSkiLz4KICA8IS0tIEJvdHRvbSBkZWNvcmF0aXZlIGdvbGRlbiBzd2lybCAtLT4KICA8cGF0aCBkPSJNIDIwIDYyIEMgMjUgODIsIDc1IDgyLCA4MCA2MiBDIDcyIDc2LCAyOCA3NiwgMjAgNjIgWiIgZmlsbD0idXJsKCNnb2xkUmltKSIvPgo8L3N2Zz4=",
-  E_BREED: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZU9yYiIgY3g9IjM1JSIgY3k9IjM1JSIgcj0iNjUlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZmFlNiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjMwJSIgc3RvcC1jb2xvcj0iI2ZmYjgzNCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjcwJSIgc3RvcC1jb2xvcj0iI2U2NjAwMCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM2NjIyMDAiLz4KICAgIDwvcmFkaWFsR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdvbGRSaW1FIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZTY5OSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iI2Q0OTIyOCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM3YTRhMDYiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjM4IiBmaWxsPSJ1cmwoI2VPcmIpIi8+CiAgPGVsbGlwc2UgY3g9IjQwIiBjeT0iMzUiIHJ4PSIxNCIgcnk9IjgiIGZpbGw9IiNmZmZmZmYiIG9wYWNpdHk9IjAuNCIgdHJhbnNmb3JtPSJyb3RhdGUoLTIwIDQwIDM1KSIvPgogIDxwYXRoIGQ9Ik0gMjAgMzggQyAyNSAxOCwgNzUgMTgsIDgwIDM4IEMgNzIgMjQsIDI4IDI0LCAyMCAzOCBaIiBmaWxsPSJ1cmwoI2dvbGRSaW1FKSIvPgogIDxwYXRoIGQ9Ik0gMjAgNjIgQyAyNSA4MiwgNzUgODIsIDgwIDYyIEMgNzIgNzYsIDI4IDc2LCAyMCA2MiBaIiBmaWxsPSJ1cmwoI2dvbGRSaW1FKSIvPgo8L3N2Zz4=",
-  HATCH: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZWdnR3JhZCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNhOGY1NmEiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiMzNGFhMjEiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMTE1MjA4Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJzaGVsbEdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZjVkYiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNkMWIyODAiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDwhLS0gRWdnIEJhc2UgLS0+CiAgPHBhdGggZD0iTSA1MCAxMiBDIDI4IDEyLCAyMiA0NSwgMjIgNzAgQyAyMiA4OCwgMzUgOTAsIDUwIDkwIEMgNjUgOTAsIDc4IDg4LCA3OCA3MCBDIDc4IDQ1LCA3MiAxMiwgNTAgMTIgWiIgZmlsbD0idXJsKCNlZ2dHcmFkKSIvPgogIDwhLS0gU3RhciBvbiBFZ2cgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSI1MCwzMiA1NCw0MiA2NSw0NCA1Nyw1MSA2MCw2MiA1MCw1NiA0MCw2MiA0Myw1MSAzNSw0NCA0Niw0MiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC45NSIvPgogIDwhLS0gQm90dG9tIFNoZWxsIEhhdGNoIC0tPgogIDxwYXRoIGQ9Ik0gMjAgNjggTCAzMCA3NSBMIDQwIDY4IEwgNTAgNzYgTCA2MCA2OCBMIDcwIDc1IEwgODAgNjggTCA4MCA3OCBDIDgwIDg4LCA2OCA5MiwgNTAgOTIgQyAzMiA5MiwgMjAgODgsIDIwIDc4IFoiIGZpbGw9InVybCgjc2hlbGxHcmFkKSIgc3Ryb2tlPSIjYTE3YTQyIiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+",
-  ARENA: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ic2hpZWxkR3JhZCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjOWM2NjMzIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRhMmMwZiIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ29sZEJvcmRlciIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZmU4OWMiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjYjg4MDE0Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJibGFkZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZmZmZmYiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiNjMmQxZTAiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjNzA4Mjk2Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8IS0tIFNoaWVsZCBCYWNrZ3JvdW5kIC0tPgogIDxwYXRoIGQ9Ik0gNTAgMjAgTCA3OCAyOCBDIDc4IDYwLCA2NSA4MCwgNTAgODggQyAzNSA4MCwgMjIgNjAsIDIyIDI4IFoiIGZpbGw9InVybCgjc2hpZWxkR3JhZCkiIHN0cm9rZT0idXJsKCNnb2xkQm9yZGVyKSIgc3Ryb2tlLXdpZHRoPSI0Ii8+CiAgPCEtLSBTd29yZCAxIC0tPgogIDxwYXRoIGQ9Ik0gMjUgMjUgTCA3NSA3NSBNIDc1IDc1IEwgNjggNzUgTSA3NSA3NSBMIDc1IDY4IiBzdHJva2U9InVybCgjYmxhZGUpIiBzdHJva2Utd2lkdGg9IjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDwhLS0gU3dvcmQgMiAtLT4KICA8cGF0aCBkPSJNIDc1IDI1IEwgMjUgNzUgTSAyNSA3NSBMIDMyIDc1IE0gMjUgNzUgTCAyNSA2OCIgc3Ryb2tlPSJ1cmwoI2JsYWRlKSIgc3Ryb2tlLXdpZHRoPSI2IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI2IiBmaWxsPSJ1cmwoI2dvbGRCb3JkZXIpIi8+Cjwvc3ZnPg==",
-  LEAGUE: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iYmFkZ2VCZyIgY3g9IjUwJSIgY3k9IjUwJSIgcj0iNTAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2U2Mzk0NiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjcwJSIgc3RvcC1jb2xvcj0iIzlkMDIwOCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMzNzAwMDAiLz4KICAgIDwvcmFkaWFsR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdvbGRSaW5nIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZTA2NiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNiNzc5MWYiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjQyIiBmaWxsPSJ1cmwoI2JhZGdlQmcpIiBzdHJva2U9InVybCgjZ29sZFJpbmcpIiBzdHJva2Utd2lkdGg9IjUiLz4KICA8IS0tIERyYWdvbiBoZWFkIHNpbGhvdWV0dGUgLS0+CiAgPHBhdGggZD0iTSAzMiA2NSBDIDI4IDQ1LCA0NSAzMCwgNjggMzIgQyA1NSA0MCwgNTIgNTAsIDY4IDU1IEMgNTUgNjAsIDQyIDcwLCAzMiA2NSBaIiBmaWxsPSIjZmZlMDY2Ii8+CiAgPGNpcmNsZSBjeD0iNTUiIGN5PSI0MCIgcj0iMyIgZmlsbD0iIzM3MDAwMCIvPgo8L3N2Zz4=",
-  FOOD: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iYXBwbGUxIiBjeD0iMzUlIiBjeT0iMzUlIiByPSI2NSUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjZmY3MzczIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iNDAlIiBzdG9wLWNvbG9yPSIjZTYxMDEwIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzZiMDIwMiIvPgogICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ibGVhZkdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNzJlNjM3Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzFjNmIwMCIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPCEtLSBCaWcgQXBwbGUgLS0+CiAgPGNpcmNsZSBjeD0iNjAiIGN5PSI1OCIgcj0iMjgiIGZpbGw9InVybCgjYXBwbGUxKSIvPgogIDwhLS0gU21hbGwgQXBwbGUgLS0+CiAgPGNpcmNsZSBjeD0iMzYiIGN5PSI2NSIgcj0iMjAiIGZpbGw9InVybCgjYXBwbGUxKSIvPgogIDwhLS0gTGVhdmVzIC0tPgogIDxwYXRoIGQ9Ik0gNTggMzIgQyA0NSAyMCwgNjUgMTAsIDc1IDIyIEMgNjUgMjgsIDYyIDMwLCA1OCAzMiBaIiBmaWxsPSJ1cmwoI2xlYWZHcmFkKSIvPgogIDxwYXRoIGQ9Ik0gMzggNDggQyAyOCAzOCwgNDUgMzAsIDUyIDQwIEMgNDQgNDUsIDQxIDQ2LCAzOCA0OCBaIiBmaWxsPSJ1cmwoI2xlYWZHcmFkKSIvPgo8L3N2Zz4=",
-  GEMS: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ2VtVG9wIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2Y3Y2JmZiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNjZjRiZjMiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdlbUJvdCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjYTAxOGM3Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRkMDM2MyIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPCEtLSBQb2x5Z29uIEdlbSAtLT4KICA8cG9seWdvbiBwb2ludHM9IjUwLDE1IDc4LDM1IDUwLDg1IDIyLDM1IiBmaWxsPSJ1cmwoI2dlbUJvdCkiLz4KICA8cG9seWdvbiBwb2ludHM9IjUwLDE1IDc4LDM1IDYyLDM1IDUwLDE1IiBmaWxsPSJ1cmwoI2dlbVRvcCkiIG9wYWNpdHk9IjAuOSIvPgogIDxwb2x5Z29uIHBvaW50cz0iNTAsMTUgMjIsMzUgMzgsMzUgNTAsMTUiIGZpbGw9IiNmZmZmZmYiIG9wYWNpdHk9IjAuNiIvPgogIDxwb2x5Z29uIHBvaW50cz0iMzgsMzUgNjIsMzUgNTAsODUiIGZpbGw9InVybCgjZ2VtVG9wKSIvPgo8L3N2Zz4="
-};
+  // Set L-Breed Start Time dynamically to 9:30 PM Local Time Today
+  const lBreedStartTime = new Date();
+  lBreedStartTime.setHours(21, 30, 0, 0); // 21:30 is 9:30 PM
 
-const chestEvents = [
-  { 
-    id: "hatch-1", 
-    name: "HATCH", 
-    type: "Hatch", 
-    duration: "3 Days", 
-    minPts: "13,000", 
-    reward: "Food", 
-    rewardIcon: ICONS.FOOD,
-    chestIcon: ICONS.HATCH, 
-    startIso: "2026-08-18T16:00:00Z", 
-    endIso: "2026-08-21T16:00:00Z", 
-    isSkip: false,
-    strategy: [
-      { icon: "🎯", text: "Hatch Flame + Terra or Terra + Terra for quick points." },
-      { icon: "💡", text: "Keep hatchery slots open for maximum efficiency." }
-    ]
-  },
-  { 
-    id: "l-breed-1", 
-    name: "L - BREED", 
-    type: "Breed", 
-    duration: "2 Days", 
-    minPts: "SKIP", 
-    reward: "—", 
-    rewardIcon: null,
-    chestIcon: ICONS.L_BREED, 
-    startIso: "2026-08-21T16:00:00Z", 
-    endIso: "2026-08-23T16:00:00Z", 
-    isSkip: true,
-    strategy: [
-      { icon: "💖", text: "Breed Flame x Terra for the 18-hour breed = 1,388 pts. Eggs hatch in 2 mins!" },
-      { icon: "💡", text: "PREP (15-20h HRS): Stock Pure x Terra or Flame x Terra beforehand for a good start." },
-      { icon: "💎", text: "PRO TIP: Keep one hatchery slot free — to go help while participating in events / races." }
-    ]
-  },
-  { 
-    id: "league-1", 
-    name: "LEAGUE", 
-    type: "League", 
-    duration: "2 Days", 
-    minPts: "8,000", 
-    reward: "Food", 
-    rewardIcon: ICONS.FOOD,
-    chestIcon: ICONS.LEAGUE, 
-    startIso: "2026-08-23T16:00:00Z", 
-    endIso: "2026-08-25T16:00:00Z", 
-    isSkip: false,
-    strategy: [
-      { icon: "⚔️", text: "Save League resets and fight immediately on start." },
-      { icon: "💡", text: "Reset opponent list if dragons are too high level." }
-    ]
-  },
-  { 
-    id: "arena-1", 
-    name: "ARENA", 
-    type: "Arena", 
-    duration: "3 Days", 
-    minPts: "10,000", 
-    reward: "Gems", 
-    rewardIcon: ICONS.GEMS,
-    chestIcon: ICONS.ARENA, 
-    startIso: "2026-08-25T16:00:00Z", 
-    endIso: "2026-08-28T16:00:00Z", 
-    isSkip: false,
-    strategy: [
-      { icon: "🏆", text: "Battle in Arenas continuously. Avoid rushing arena levels." },
-      { icon: "💎", text: "Collect free arena rush points from daily free spins." }
-    ]
-  },
-  { 
-    id: "e-breed-1", 
-    name: "E - BREED", 
-    type: "Breed", 
-    duration: "2 Days", 
-    minPts: "SKIP", 
-    reward: "—", 
-    rewardIcon: null,
-    chestIcon: ICONS.E_BREED, 
-    startIso: "2026-08-28T16:00:00Z", 
-    endIso: "2026-08-30T16:00:00Z", 
-    isSkip: true,
-    strategy: [
-      { icon: "💖", text: "E-Breed event is SKIP period. Save gems and rest for upcoming Hatch chest." }
-    ]
-  },
-  { 
-    id: "hatch-2", 
-    name: "HATCH", 
-    type: "Hatch", 
-    duration: "2 Days", 
-    minPts: "8,750", 
-    reward: "Food", 
-    rewardIcon: ICONS.FOOD,
-    chestIcon: ICONS.HATCH, 
-    startIso: "2026-08-30T16:00:00Z", 
-    endIso: "2026-09-01T16:00:00Z", 
-    isSkip: false,
-    strategy: [
-      { icon: "🥚", text: "Hatch fast dragons to reach 8,750 minimum." }
-    ]
-  }
-];
+  // Format local time display for the schedule
+  document.getElementById('breed-schedule-date').innerText = 
+    `Starts (Local): Today, ${lBreedStartTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} (2 Days)`;
 
-function formatLocalTime(isoString) {
-  const d = new Date(isoString);
-  return d.toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-}
+  // Countdown timer function
+  function updateCountdown() {
+    const now = new Date().getTime();
+    const distance = lBreedStartTime.getTime() - now;
 
-function formatLocalDateShort(isoString) {
-  const d = new Date(isoString);
-  return d.toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
-function renderChestList() {
-  const container = document.getElementById('chestListContainer');
-  container.innerHTML = '';
-
-  const now = new Date();
-
-  chestEvents.forEach(evt => {
-    const start = new Date(evt.startIso);
-    const end = new Date(evt.endIso);
-    const isOngoing = (now >= start && now <= end);
-
-    const div = document.createElement('div');
-    let extraClass = '';
-    if (isOngoing) extraClass = 'active-item';
-    else if (evt.isSkip) extraClass = 'skip-item';
-
-    div.className = `chest-item ${extraClass}`;
-
-    // Rule: Breed event in monthly schedule shows ONLY Orb icon (No title). Non-breed shows Title.
-    let leftInfoHtml = '';
-    if (evt.isSkip) {
-      leftInfoHtml = `
-        <div class="chest-item-left">
-          <img src="${evt.chestIcon}" class="chest-icon" alt="${evt.name}">
-          <div class="chest-info">
-            <div class="chest-sub">${formatLocalDateShort(evt.startIso)} • ${evt.duration}</div>
-          </div>
-        </div>
-      `;
-    } else {
-      leftInfoHtml = `
-        <div class="chest-item-left">
-          <img src="${evt.chestIcon}" class="chest-icon" alt="${evt.name}">
-          <div class="chest-info">
-            <div class="chest-name">${evt.name}</div>
-            <div class="chest-sub">${formatLocalDateShort(evt.startIso)} • ${evt.duration}</div>
-          </div>
-        </div>
-      `;
+    if (distance < 0) {
+      document.getElementById('countdown').innerText = "LIVE NOW";
+      return;
     }
 
-    let rightPtsHtml = '';
-    if (evt.isSkip) {
-      rightPtsHtml = `
-        <div class="pts-box">
-          <div class="pts-val skip-val">SKIP</div>
-          <div class="pts-label">MIN PTS</div>
-        </div>
-      `;
-    } else {
-      rightPtsHtml = `
-        <div class="pts-box">
-          <div class="pts-val">${evt.minPts}</div>
-          <div class="pts-label">MIN PTS</div>
-        </div>
-      `;
-    }
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    div.innerHTML = `
-      ${leftInfoHtml}
-      <div class="chest-item-right">
-        ${rightPtsHtml}
-      </div>
-    `;
-
-    container.appendChild(div);
-  });
-}
-
-function updateTrackerState() {
-  const now = new Date();
-  
-  // Check active event
-  let activeEvent = chestEvents.find(e => now >= new Date(e.startIso) && now <= new Date(e.endIso));
-  // Check upcoming event
-  let nextEvent = chestEvents.find(e => new Date(e.startIso) > now);
-
-  const bannerIcon = document.getElementById('bannerIcon');
-  const bannerStatusBadge = document.getElementById('bannerStatusBadge');
-  const bannerTitle = document.getElementById('bannerTitle');
-  const bannerDuration = document.getElementById('bannerDuration');
-  const bannerMinPts = document.getElementById('bannerMinPts');
-  const bannerNextUp = document.getElementById('bannerNextUp');
-  const timerHeadline = document.getElementById('timerHeadline');
-  const localStartFootnote = document.getElementById('localStartFootnote');
-  const strategyContent = document.getElementById('strategyContent');
-
-  let targetTime = null;
-
-  if (activeEvent) {
-    // ACTIVE / ONGOING EVENT OR RESTING EVENT
-    bannerIcon.src = activeEvent.chestIcon;
-    bannerDuration.textContent = activeEvent.duration;
-    bannerMinPts.textContent = activeEvent.minPts;
-    if (activeEvent.isSkip) {
-      bannerMinPts.style.color = "var(--accent-red)";
-    } else {
-      bannerMinPts.style.color = "var(--accent-gold)";
-    }
-
-    if (activeEvent.isSkip) {
-      // It is RESTING / BREED PERIOD
-      bannerStatusBadge.className = "status-badge status-resting";
-      bannerStatusBadge.textContent = "REST PERIOD";
-      bannerTitle.textContent = "RESTING";
-      timerHeadline.textContent = "NEXT CHEST BEGINS IN";
-      targetTime = new Date(activeEvent.endIso);
-      
-      if (nextEvent) bannerNextUp.textContent = nextEvent.name;
-      else bannerNextUp.textContent = "END OF SEASON";
-
-      localStartFootnote.textContent = "Next event starts local time: " + formatLocalTime(activeEvent.endIso);
-    } else {
-      // IT IS ACTIVE REGULAR CHEST
-      bannerStatusBadge.className = "status-badge status-active";
-      bannerStatusBadge.textContent = "LIVE NOW";
-      bannerTitle.textContent = activeEvent.name + " CHEST";
-      timerHeadline.textContent = "CHEST ENDS IN";
-      targetTime = new Date(activeEvent.endIso);
-
-      if (nextEvent) bannerNextUp.textContent = nextEvent.name;
-      else bannerNextUp.textContent = "END OF SEASON";
-
-      localStartFootnote.textContent = "Chest ends local time: " + formatLocalTime(activeEvent.endIso);
-    }
-
-    // Populate strategy
-    strategyContent.innerHTML = '';
-    activeEvent.strategy.forEach(s => {
-      strategyContent.innerHTML += `<div class="strategy-item"><span class="strategy-icon">${s.icon}</span><span>${s.text}</span></div>`;
-    });
-
-  } else if (nextEvent) {
-    // UPCOMING EVENT BEFORE ANYTHING STARTED
-    bannerIcon.src = nextEvent.chestIcon;
-    bannerDuration.textContent = nextEvent.duration;
-    bannerMinPts.textContent = nextEvent.minPts;
-    bannerStatusBadge.className = "status-badge status-resting";
-    bannerStatusBadge.textContent = "UPCOMING";
-    bannerTitle.textContent = nextEvent.name;
-    timerHeadline.textContent = "NEXT CHEST BEGINS IN";
-    targetTime = new Date(nextEvent.startIso);
-    bannerNextUp.textContent = nextEvent.name;
-    localStartFootnote.textContent = "Starts local time: " + formatLocalTime(nextEvent.startIso);
-
-    strategyContent.innerHTML = '';
-    nextEvent.strategy.forEach(s => {
-      strategyContent.innerHTML += `<div class="strategy-item"><span class="strategy-icon">${s.icon}</span><span>${s.text}</span></div>`;
-    });
+    document.getElementById('countdown').innerText = 
+      `${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
   }
 
-  // COUNTDOWN COMPUTATION
-  if (targetTime) {
-    const diff = targetTime - now;
-    if (diff > 0) {
-      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const m = Math.floor((diff / 1000 / 60) % 60);
-      const s = Math.floor((diff / 1000) % 60);
-
-      document.getElementById('tDays').textContent = String(d).padStart(2, '0');
-      document.getElementById('tHours').textContent = String(h).padStart(2, '0');
-      document.getElementById('tMins').textContent = String(m).padStart(2, '0');
-      document.getElementById('tSecs').textContent = String(s).padStart(2, '0');
-    } else {
-      document.getElementById('tDays').textContent = "00";
-      document.getElementById('tHours').textContent = "00";
-      document.getElementById('tMins').textContent = "00";
-      document.getElementById('tSecs').textContent = "00";
-    }
-  }
-}
-
-function switchTab(evt, tabId) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-  document.getElementById(tabId).classList.add('active');
-  evt.currentTarget.classList.add('active');
-}
-
-// DISCORD PINGER LOGIC
-const defaultTemplate = `**[The {EVENT_NAME}]** Begins Now\n\nDuration: {DURATION}\nMin pts: {MIN_PTS}\nReward: {REWARD}`;
-
-function loadPresetMessage() {
-  document.getElementById('customMessageTemplate').value = defaultTemplate;
-  updateMessagePreview();
-}
-
-function resetDefaultMessage() {
-  loadPresetMessage();
-}
-
-function updateMessagePreview() {
-  const selectedData = document.getElementById('pingChestSelect').value.split('|');
-  const tag = document.getElementById('pingTag').value.trim();
-  let template = document.getElementById('customMessageTemplate').value;
-
-  template = template.replace('{EVENT_NAME}', selectedData[0]);
-  template = template.replace('{DURATION}', selectedData[1]);
-  template = template.replace('{MIN_PTS}', selectedData[2]);
-  template = template.replace('{REWARD}', selectedData[3]);
-
-  const finalOutput = (tag ? tag + "\n" : "") + template;
-  document.getElementById('msgPreview').textContent = finalOutput;
-}
-
-function sendDiscordPing() {
-  const url = document.getElementById('webhookUrl').value.trim();
-  if (!url) { alert("Please enter a valid Discord Webhook URL."); return; }
-
-  const messageText = document.getElementById('msgPreview').textContent;
-  fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ content: messageText })
-  })
-  .then(res => {
-    if (res.ok) alert("Discord ping sent successfully!");
-    else alert("Failed to send message. Check Webhook URL.");
-  });
-}
-
-// INITIALIZE
-renderChestList();
-updateTrackerState();
-setInterval(updateTrackerState, 1000);
-loadPresetMessage();
+  // Update immediately and then every second
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
 </script>
 
 </body>
