@@ -417,6 +417,49 @@
     </div>
 </section>
 
+<script>
+  async function sendDiscordPing() {
+    const message = document.getElementById("msgPreview").innerText;
+    
+    // Collect non-empty URLs from all 8 webhook input fields
+    const webhooks = [];
+    for (let i = 1; i <= 8; i++) {
+      const url = document.getElementById(`webhookUrl${i}`)?.value.trim();
+      if (url) {
+        webhooks.push(url);
+      }
+    }
+
+    if (webhooks.length === 0) {
+      alert("Please enter at least one Discord Webhook URL!");
+      return;
+    }
+
+    let successCount = 0;
+
+    // Dispatch messages sequentially to stay within rate limits
+    for (let i = 0; i < webhooks.length; i++) {
+      try {
+        const response = await fetch(webhooks[i], {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content: message })
+        });
+
+        if (response.ok) {
+          successCount++;
+        } else {
+          console.error(`Webhook #${i + 1} failed with status: ${response.status}`);
+        }
+      } catch (err) {
+        console.error(`Error sending to Webhook #${i + 1}:`, err);
+      }
+    }
+
+    alert(`Dispatched! Successfully sent to ${successCount} out of ${webhooks.length} webhooks.`);
+  }
+</script>
+
 </main>
 
 <script>
