@@ -347,6 +347,51 @@
         </div>
 
         <div class="form-group">
+          <label>4. Discord Webhook URL:</label>
+          <input type="text" id="webhookUrl" placeholder="https://discord.com/api/webhooks/...">
+        </div>
+
+        <button class="btn-discord" onclick="sendDiscordPing()">🚀 Send Ping Now</button>
+      </div>
+
+      <div class="tool-box">
+        <h3 style="font-size: 16px; margin-bottom: 15px; color: var(--accent-cyan);">Live Output Preview</h3>
+        
+        <div class="form-group">
+          <label>Live Output Preview:</label>
+          <div id="msgPreview" style="background: #060914; border: 1px solid var(--border-color); padding: 14px; border-radius: 10px; font-family: monospace; font-size: 13px; white-space: pre-wrap; color: #a970ff; min-height: 150px; line-height: 1.5;"></div>
+        </div>
+      </div>
+    </div>
+    <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 20px; color: #fff;">🔔 Custom Multi-Discord Text Pinger</h2>
+    
+    <div class="grid-pinger">
+      <div class="tool-box">
+        <h3 style="font-size: 16px; margin-bottom: 15px; color: var(--accent-purple);">Ping Configuration</h3>
+        
+        <div class="form-group">
+          <label>1. Select Chest Event Preset:</label>
+          <select id="pingChestSelect" onchange="loadPresetMessage()">
+            <option value="Hatch Chest 🥚|3 Days|13k|Food">Hatch Chest 🥚 (3 Days) — 13k Min (Food)</option>
+            <option value="League Chest 🏆|2 Days|8k|Food">League Chest 🏆 (2 Days) — 8k Min (Food)</option>
+            <option value="Arena Chest ⚔️|3 Days|10k|Gems" selected>Arena Chest ⚔️ (3 Days) — 10k Min (Gems)</option>
+            <option value="Hatch Chest 🥚|2 Days|8.75k|Food">Hatch Chest 🥚 (2 Days) — 8.75k Min (Food)</option>
+            <option value="Arena Chest ⚔️|2 Days|7.1k|Gems">Arena Chest ⚔️ (2 Days) — 7.1k Min (Gems)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>2. Role Tag / Ping (Empty by default):</label>
+          <input type="text" id="pingTag" value="" placeholder="e.g. <@&ROLE_ID>" oninput="updateMessagePreview()">
+        </div>
+
+        <div class="form-group">
+          <label>3. Edit Message Format (Fully Customizable):</label>
+          <textarea id="customMessageTemplate" rows="5" oninput="updateMessagePreview()"></textarea>
+          <button class="btn-reset" onclick="resetDefaultMessage()">Reset to Default Template</button>
+        </div>
+
+        <div class="form-group">
           <label>4. Discord Webhook URLs (Up to 8):</label>
           <input type="text" id="webhookUrl1" class="webhook-input" placeholder="Webhook 1: https://discord.com/api/webhooks/..." style="margin-bottom: 6px;">
           <input type="text" id="webhookUrl2" class="webhook-input" placeholder="Webhook 2 (optional): https://discord.com/api/webhooks/..." style="margin-bottom: 6px;">
@@ -355,7 +400,7 @@
           <input type="text" id="webhookUrl5" class="webhook-input" placeholder="Webhook 5 (optional): https://discord.com/api/webhooks/..." style="margin-bottom: 6px;">
           <input type="text" id="webhookUrl6" class="webhook-input" placeholder="Webhook 6 (optional): https://discord.com/api/webhooks/..." style="margin-bottom: 6px;">
           <input type="text" id="webhookUrl7" class="webhook-input" placeholder="Webhook 7 (optional): https://discord.com/api/webhooks/..." style="margin-bottom: 6px;">
-          <input type="text" id="webhookUrl8" class="webhook-input" placeholder="Webhook 8 (optional): https://discord.com/api/webhooks/...">
+          <input type="text" id="webhookUrl8" class="webhook-input" placeholder="Webhook 8 : https://discord.com/api/webhooks/...">
         </div>
 
         <button class="btn-discord" onclick="sendDiscordPing()">🚀 Send Multi-Ping Now</button>
@@ -388,23 +433,6 @@ const ICONS = {
 };
 
 const chestEvents = [
-  { 
-    id: "hatch-1", 
-    name: "HATCH", 
-    type: "Hatch", 
-    duration: "3 Days", 
-    minPts: "13,000", 
-    reward: "Food", 
-    rewardIcon: ICONS.FOOD,
-    chestIcon: ICONS.HATCH, 
-    startIso: "2026-08-18T16:00:00Z", 
-    endIso: "2026-08-21T16:00:00Z", 
-    isSkip: false,
-    strategy: [
-      { icon: "🎯", text: "Hatch Flame + Terra or Terra + Terra for quick points." },
-      { icon: "💡", text: "Keep hatchery slots open for maximum efficiency." }
-    ]
-  },
   { 
     id: "l-breed-1", 
     name: "L - BREED", 
@@ -758,6 +786,75 @@ function sendDiscordPing() {
     else alert("Failed to send message. Check Webhook URL.");
   });
 }
+
+// DISCORD PINGER LOGIC
+const defaultTemplate = `**[The {EVENT_NAME}]** Begins Now\n\nDuration: {DURATION}\nMin pts: {MIN_PTS}\nReward: {REWARD}`;
+
+function loadPresetMessage() {
+  document.getElementById('customMessageTemplate').value = defaultTemplate;
+  updateMessagePreview();
+}
+
+function resetDefaultMessage() {
+  loadPresetMessage();
+}
+
+function updateMessagePreview() {
+  const selectedData = document.getElementById('pingChestSelect').value.split('|');
+  const tag = document.getElementById('pingTag').value.trim();
+  let template = document.getElementById('customMessageTemplate').value;
+
+  template = template.replace('{EVENT_NAME}', selectedData[0]);
+  template = template.replace('{DURATION}', selectedData[1]);
+  template = template.replace('{MIN_PTS}', selectedData[2]);
+  template = template.replace('{REWARD}', selectedData[3]);
+
+  const finalOutput = (tag ? tag + "\n" : "") + template;
+  document.getElementById('msgPreview').textContent = finalOutput;
+}
+
+// MULTI-WEBHOOK SENDER (UP TO 8 WEBHOOKS)
+async function sendDiscordPing() {
+  const messageText = document.getElementById('msgPreview').textContent;
+  
+  // Collect non-empty webhook URLs from all 8 input fields
+  const webhooks = [];
+  for (let i = 1; i <= 8; i++) {
+    const el = document.getElementById(`webhookUrl${i}`);
+    if (el) {
+      const url = el.value.trim();
+      if (url) webhooks.push(url);
+    }
+  }
+
+  if (webhooks.length === 0) {
+    alert("Please enter at least one valid Discord Webhook URL.");
+    return;
+  }
+
+  let successCount = 0;
+
+  for (let i = 0; i < webhooks.length; i++) {
+    try {
+      const res = await fetch(webhooks[i], {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: messageText })
+      });
+
+      if (res.ok) {
+        successCount++;
+      } else {
+        console.error(`Webhook #${i + 1} failed with status: ${res.status}`);
+      }
+    } catch (err) {
+      console.error(`Error sending to Webhook #${i + 1}:`, err);
+    }
+  }
+
+  alert(`Pings dispatched! Successfully sent to ${successCount} out of ${webhooks.length} webhooks.`);
+}
+
 
 // INITIALIZE
 renderChestList();
