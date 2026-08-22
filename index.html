@@ -347,60 +347,15 @@
         </div>
 
         <div class="form-group">
-          <label>4. Discord Webhook URL:</label>
-          <input type="text" id="webhookUrl" placeholder="https://discord.com/api/webhooks/...">
-        </div>
-
-        <button class="btn-discord" onclick="sendDiscordPing()">🚀 Send Ping Now</button>
-      </div>
-
-      <div class="tool-box">
-        <h3 style="font-size: 16px; margin-bottom: 15px; color: var(--accent-cyan);">Live Output Preview</h3>
-        
-        <div class="form-group">
-          <label>Live Output Preview:</label>
-          <div id="msgPreview" style="background: #060914; border: 1px solid var(--border-color); padding: 14px; border-radius: 10px; font-family: monospace; font-size: 13px; white-space: pre-wrap; color: #a970ff; min-height: 150px; line-height: 1.5;"></div>
-        </div>
-      </div>
-    </div>
-    <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 20px; color: #fff;">🔔 Custom Multi-Discord Text Pinger</h2>
-    
-    <div class="grid-pinger">
-      <div class="tool-box">
-        <h3 style="font-size: 16px; margin-bottom: 15px; color: var(--accent-purple);">Ping Configuration</h3>
-        
-        <div class="form-group">
-          <label>1. Select Chest Event Preset:</label>
-          <select id="pingChestSelect" onchange="loadPresetMessage()">
-            <option value="Hatch Chest 🥚|3 Days|13k|Food">Hatch Chest 🥚 (3 Days) — 13k Min (Food)</option>
-            <option value="League Chest 🏆|2 Days|8k|Food">League Chest 🏆 (2 Days) — 8k Min (Food)</option>
-            <option value="Arena Chest ⚔️|3 Days|10k|Gems" selected>Arena Chest ⚔️ (3 Days) — 10k Min (Gems)</option>
-            <option value="Hatch Chest 🥚|2 Days|8.75k|Food">Hatch Chest 🥚 (2 Days) — 8.75k Min (Food)</option>
-            <option value="Arena Chest ⚔️|2 Days|7.1k|Gems">Arena Chest ⚔️ (2 Days) — 7.1k Min (Gems)</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>2. Role Tag / Ping (Empty by default):</label>
-          <input type="text" id="pingTag" value="" placeholder="e.g. <@&ROLE_ID>" oninput="updateMessagePreview()">
-        </div>
-
-        <div class="form-group">
-          <label>3. Edit Message Format (Fully Customizable):</label>
-          <textarea id="customMessageTemplate" rows="5" oninput="updateMessagePreview()"></textarea>
-          <button class="btn-reset" onclick="resetDefaultMessage()">Reset to Default Template</button>
-        </div>
-
-        <div class="form-group">
           <label>4. Discord Webhook URLs (Up to 8):</label>
           <input type="text" id="webhookUrl1" class="webhook-input" placeholder="Webhook 1: https://discord.com/api/webhooks/..." style="margin-bottom: 6px;">
-          <input type="text" id="webhookUrl2" class="webhook-input" placeholder="Webhook 2: https://discord.com/api/webhooks/..." style="margin-bottom: 6px;">
-          <input type="text" id="webhookUrl3" class="webhook-input" placeholder="Webhook 3: https://discord.com/api/webhooks/..." style="margin-bottom: 6px;">
-          <input type="text" id="webhookUrl4" class="webhook-input" placeholder="Webhook 4: https://discord.com/api/webhooks/..." style="margin-bottom: 6px;">
-          <input type="text" id="webhookUrl5" class="webhook-input" placeholder="Webhook 5: https://discord.com/api/webhooks/..." style="margin-bottom: 6px;">
-          <input type="text" id="webhookUrl6" class="webhook-input" placeholder="Webhook 6: https://discord.com/api/webhooks/..." style="margin-bottom: 6px;">
-          <input type="text" id="webhookUrl7" class="webhook-input" placeholder="Webhook 7: https://discord.com/api/webhooks/..." style="margin-bottom: 6px;">
-          <input type="text" id="webhookUrl8" class="webhook-input" placeholder="Webhook 8: https://discord.com/api/webhooks/...">
+          <input type="text" id="webhookUrl2" class="webhook-input" placeholder="Webhook 2 (optional): https://discord.com/api/webhooks/..." style="margin-bottom: 6px;">
+          <input type="text" id="webhookUrl3" class="webhook-input" placeholder="Webhook 3 (optional): https://discord.com/api/webhooks/..." style="margin-bottom: 6px;">
+          <input type="text" id="webhookUrl4" class="webhook-input" placeholder="Webhook 4 (optional): https://discord.com/api/webhooks/..." style="margin-bottom: 6px;">
+          <input type="text" id="webhookUrl5" class="webhook-input" placeholder="Webhook 5 (optional): https://discord.com/api/webhooks/..." style="margin-bottom: 6px;">
+          <input type="text" id="webhookUrl6" class="webhook-input" placeholder="Webhook 6 (optional): https://discord.com/api/webhooks/..." style="margin-bottom: 6px;">
+          <input type="text" id="webhookUrl7" class="webhook-input" placeholder="Webhook 7 (optional): https://discord.com/api/webhooks/..." style="margin-bottom: 6px;">
+          <input type="text" id="webhookUrl8" class="webhook-input" placeholder="Webhook 8 (optional): https://discord.com/api/webhooks/...">
         </div>
 
         <button class="btn-discord" onclick="sendDiscordPing()">🚀 Send Multi-Ping Now</button>
@@ -417,48 +372,6 @@
     </div>
 </section>
 
-<script>
-  async function sendDiscordPing() {
-    const message = document.getElementById("msgPreview").innerText;
-    
-    // Collect non-empty URLs from all 8 webhook input fields
-    const webhooks = [];
-    for (let i = 1; i <= 8; i++) {
-      const url = document.getElementById(`webhookUrl${i}`)?.value.trim();
-      if (url) {
-        webhooks.push(url);
-      }
-    }
-
-    if (webhooks.length === 0) {
-      alert("Please enter at least one Discord Webhook URL!");
-      return;
-    }
-
-    let successCount = 0;
-
-    // Dispatch messages sequentially to stay within rate limits
-    for (let i = 0; i < webhooks.length; i++) {
-      try {
-        const response = await fetch(webhooks[i], {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ content: message })
-        });
-
-        if (response.ok) {
-          successCount++;
-        } else {
-          console.error(`Webhook #${i + 1} failed with status: ${response.status}`);
-        }
-      } catch (err) {
-        console.error(`Error sending to Webhook #${i + 1}:`, err);
-      }
-    }
-
-    alert(`Dispatched! Successfully sent to ${successCount} out of ${webhooks.length} webhooks.`);
-  }
-</script>
 
 </main>
 
